@@ -74,7 +74,7 @@ Here is a visual walkthrough of the platform interfaces, matching the screenshot
 
 ### 4. Space & Operations Layout
 *   **Floor & Table Seating Engine**: Visual floor layouts mapping physical dining spaces. Dynamically tracks table state (available, occupied, or reserved) to synchronize POS and kitchen ticketing.
-    <p align="center"><img src="./screenshots/Floor&Tabels.jpeg" width="90%" alt="Floor & Tables Management" /></p>
+    <p align="center"><img src="./screenshots/Floor&Tables.jpeg" width="90%" alt="Floor & Tables Management" /></p>
 
 ---
 

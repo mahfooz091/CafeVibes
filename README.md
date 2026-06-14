@@ -30,7 +30,7 @@ Here is a visual walkthrough of the platform interfaces, matching the screenshot
 
 ### 1. Public & Core Portals
 *   **Landing Page**: A clean, responsive public introduction showcase presenting CafeVibes.
-    <p align="center"><img src="Screenshots/landingpage.png" width="90%" alt="Landing Page" /></p>
+    <p align="center"><img src="Screenshots/landingpage.jpeg" width="90%" alt="Landing Page" /></p>
 *   **Authentication & Access**: Standard form validation and secure signups with role-based routing (Admin vs. Employee).
     <table align="center" width="100%">
       <tr>
@@ -38,8 +38,8 @@ Here is a visual walkthrough of the platform interfaces, matching the screenshot
         <td width="50%" align="center"><b>Log In</b></td>
       </tr>
       <tr>
-        <td><img src="Screenshots/Signup.png" width="100%" alt="Sign Up" /></td>
-        <td><img src="Screenshots/Login.png" width="100%" alt="Login" /></td>
+        <td><img src="Screenshots/Signup.jpeg" width="100%" alt="Sign Up" /></td>
+        <td><img src="Screenshots/Login.jpeg" width="100%" alt="Login" /></td>
       </tr>
     </table>
 
@@ -47,9 +47,9 @@ Here is a visual walkthrough of the platform interfaces, matching the screenshot
 
 ### 2. POS Terminal & Checkout
 *   **POS Terminal Interface**: Quick product search, categorizations, color-coded identifiers, and interactive catalog browsing.
-    <p align="center"><img src="Screenshots/POSTerminal.png" width="90%" alt="POS Terminal" /></p>
+    <p align="center"><img src="Screenshots/POSTerminal.jpeg" width="90%" alt="POS Terminal" /></p>
 *   **Active Cart & Checkout Drawer**: Visual cart calculation displaying item lists, subtotals, custom discounts, and payment methods.
-    <p align="center"><img src="Screenshots/POSCart.png" width="90%" alt="POS Cart" /></p>
+    <p align="center"><img src="Screenshots/POSCart.jpeg" width="90%" alt="POS Cart" /></p>
 *   **Dynamic Payments & Invoicing**: Generates instant UPI/cash QR Codes for cashless transactions and prints elegant formatted HTML customer receipts.
     <table align="center" width="100%">
       <tr>
@@ -57,8 +57,8 @@ Here is a visual walkthrough of the platform interfaces, matching the screenshot
         <td width="50%" align="center"><b>Bill / Receipt View</b></td>
       </tr>
       <tr>
-        <td><img src="Screenshots/QRCode.png" width="100%" alt="QR Code Payment" /></td>
-        <td><img src="Screenshots/Receipt.png" width="100%" alt="Bill Receipt" /></td>
+        <td><img src="Screenshots/QRCode.jpeg" width="100%" alt="QR Code Payment" /></td>
+        <td><img src="Screenshots/Receipt.jpeg" width="100%" alt="Bill Receipt" /></td>
       </tr>
     </table>
 
@@ -66,25 +66,25 @@ Here is a visual walkthrough of the platform interfaces, matching the screenshot
 
 ### 3. Kitchen Operations & Order Logs
 *   **Real-time Kitchen Display System (KDS)**: Dynamically updates orders using Socket.io. Shows order timer countdowns, item checklists, and lets chefs mark tickets as complete instantly.
-    <p align="center"><img src="Screenshots/Kitchen.png" width="90%" alt="Kitchen Display System" /></p>
+    <p align="center"><img src="Screenshots/Kitchen.jpeg" width="90%" alt="Kitchen Display System" /></p>
 *   **Detailed Order Lists**: Review past, active, pending, and completed orders with comprehensive search and metadata tracking.
-    <p align="center"><img src="Screenshots/Orders.png" width="90%" alt="Order Management" /></p>
+    <p align="center"><img src="Screenshots/Orders.jpeg" width="90%" alt="Order Management" /></p>
 
 ---
 
 ### 4. Space & Operations Layout
 *   **Floor & Table Seating Engine**: Visual floor layouts mapping physical dining spaces. Dynamically tracks table state (available, occupied, or reserved) to synchronize POS and kitchen ticketing.
-    <p align="center"><img src="Screenshots/Floor&Tabels.png" width="90%" alt="Floor & Tables Management" /></p>
+    <p align="center"><img src="Screenshots/Floor&Tabels.jpeg" width="90%" alt="Floor & Tables Management" /></p>
 
 ---
 
 ### 5. Administrative Controls & Analytics
 *   **Performance Dashboards**: Executive oversight on total sales, active orders, customer counts, and real-time revenue breakdowns.
-    <p align="center"><img src="Screenshots/Dashboard.png" width="90%" alt="Admin Dashboard" /></p>
+    <p align="center"><img src="Screenshots/Dashboard.jpeg" width="90%" alt="Admin Dashboard" /></p>
 *   **Sales & Business Reports**: Financial summaries detailing revenue trends and item performance, with options to export lists to Excel/PDF.
-    <p align="center"><img src="Screenshots/Reports.png" width="90%" alt="Reports & Analytics" /></p>
+    <p align="center"><img src="Screenshots/Reports.jpeg" width="90%" alt="Reports & Analytics" /></p>
 *   **Resource & Settings Panel**: General system configs, printer choices, currency preferences, and theme choices.
-    <p align="center"><img src="Screenshots/Settings.png" width="90%" alt="Settings" /></p>
+    <p align="center"><img src="Screenshots/Settings.jpeg" width="90%" alt="Settings" /></p>
 
 ---
 
@@ -97,8 +97,8 @@ Manage key database entities with standard responsive CRUD modals:
         <td width="50%" align="center"><b>Categories Manager</b></td>
       </tr>
       <tr>
-        <td><img src="Screenshots/Products.png" width="100%" alt="Products" /></td>
-        <td><img src="Screenshots/Categories.png" width="100%" alt="Categories" /></td>
+        <td><img src="Screenshots/Products.jpeg" width="100%" alt="Products" /></td>
+        <td><img src="Screenshots/Categories.jpeg" width="100%" alt="Categories" /></td>
       </tr>
     </table>
 *   **Coupons & Customer Relationship (CRM)**: Custom percentage/fixed value discounts and detailed customer logs.
@@ -108,8 +108,8 @@ Manage key database entities with standard responsive CRUD modals:
         <td width="50%" align="center"><b>Customer CRM Profiles</b></td>
       </tr>
       <tr>
-        <td><img src="Screenshots/Coupons.png" width="100%" alt="Coupons" /></td>
-        <td><img src="Screenshots/Customers.png" width="100%" alt="Customers" /></td>
+        <td><img src="Screenshots/Coupons.jpeg" width="100%" alt="Coupons" /></td>
+        <td><img src="Screenshots/Customers.jpeg" width="100%" alt="Customers" /></td>
       </tr>
     </table>
 *   **Staff & User Control**: Manage user profiles, active employees, roles (Admin vs. Employee), and access status.
@@ -119,8 +119,8 @@ Manage key database entities with standard responsive CRUD modals:
         <td width="50%" align="center"><b>Employee Profile Page</b></td>
       </tr>
       <tr>
-        <td><img src="Screenshots/Employee.png" width="100%" alt="Employee Admin Page" /></td>
-        <td><img src="Screenshots/EmployeePage.png" width="100%" alt="Employee Dashboard Page" /></td>
+        <td><img src="Screenshots/Employee.jpeg" width="100%" alt="Employee Admin Page" /></td>
+        <td><img src="Screenshots/EmployeePage.jpeg" width="100%" alt="Employee Dashboard Page" /></td>
       </tr>
     </table>
 

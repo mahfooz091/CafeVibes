@@ -1,19 +1,14 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const floorSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Floor name is required'],
-      trim: true,
-      unique: true,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    name: { type: String, required: [true, 'Floor name is required'], trim: true },
+    description: { type: String, trim: true },
+    isActive: { type: Boolean, default: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Floor', floorSchema);
+const Floor = mongoose.model('Floor', floorSchema);
+export default Floor;

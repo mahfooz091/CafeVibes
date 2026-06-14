@@ -1,54 +1,21 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Product name is required'],
-      trim: true,
-    },
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category',
-      required: [true, 'Category is required'],
-    },
-    price: {
-      type: Number,
-      required: [true, 'Price is required'],
-      min: [0, 'Price cannot be negative'],
-    },
-    unit: {
-      type: String,
-      enum: ['piece', 'kg', 'litre', 'plate', 'cup', 'gram', 'ml'],
-      default: 'piece',
-    },
-    tax: {
-      type: Number, // percentage e.g. 5 means 5%
-      default: 0,
-      min: 0,
-      max: 100,
-    },
-    description: {
-      type: String,
-      trim: true,
-      default: '',
-    },
-    image: {
-      type: String,
-      default: '',
-    },
-    showOnKDS: {
-      type: Boolean,
-      default: true, // whether this product appears on Kitchen Display
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    name: { type: String, required: [true, 'Product name is required'], trim: true },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+    price: { type: Number, required: [true, 'Price is required'], min: 0 },
+    unit: { type: String, default: 'piece', trim: true },
+    tax: { type: Number, default: 0, min: 0, max: 100 },
+    description: { type: String, trim: true },
+    image: String,
+    isActive: { type: Boolean, default: true },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
 productSchema.index({ name: 'text', description: 'text' });
 
-module.exports = mongoose.model('Product', productSchema);
+const Product = mongoose.model('Product', productSchema);
+export default Product;

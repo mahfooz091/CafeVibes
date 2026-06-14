@@ -1,70 +1,37 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-const orderItemSchema = new mongoose.Schema(
-  {
-    product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      required: true,
-    },
-    name: { type: String, required: true }, // snapshot at time of order
-    price: { type: Number, required: true }, // unit price snapshot
-    quantity: { type: Number, required: true, min: 1 },
-    tax: { type: Number, default: 0 }, // tax % snapshot
-    discount: { type: Number, default: 0 }, // amount discounted on this line (from product promotions)
-    lineTotal: { type: Number, required: true }, // (price * quantity) - discount
-    kdsStatus: {
-      type: String,
-      enum: ['pending', 'to_cook', 'preparing', 'completed'],
-      default: 'pending',
-    },
+const orderItemSchema = new mongoose.Schema({
+  product: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+  name: { type: String, required: true },
+  price: { type: Number, required: true },
+  quantity: { type: Number, required: true, min: 1 },
+  tax: { type: Number, default: 0 },
+  unit: { type: String, default: 'piece' },
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
+  categoryColor: { type: String },
+  kitchenStatus: {
+    type: String,
+    enum: ['to_cook', 'preparing', 'completed'],
+    default: 'to_cook',
   },
-  { _id: false }
-);
+  notes: String,
+});
+
+const paymentSchema = new mongoose.Schema({
+  method: { type: String, enum: ['cash', 'card', 'upi'], required: true },
+  amount: { type: Number, required: true },
+  transactionRef: String,
+  qrCode: String,
+  changeGiven: { type: Number, default: 0 },
+  paidAt: { type: Date, default: Date.now },
+});
 
 const orderSchema = new mongoose.Schema(
   {
-    orderNumber: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    session: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Session',
-      required: true,
-    },
-    employee: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    table: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Table',
-      default: null,
-    },
-    customer: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Customer',
-      default: null,
-    },
+    orderNumber: { type: String, unique: true },
     items: [orderItemSchema],
-    coupon: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Coupon',
-      default: null,
-    },
-    appliedPromotions: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Promotion',
-      },
-    ],
-    subtotal: { type: Number, required: true, default: 0 },
-    taxAmount: { type: Number, required: true, default: 0 },
-    discountAmount: { type: Number, required: true, default: 0 },
-    total: { type: Number, required: true, default: 0 },
+    customer: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
+    table: { type: mongoose.Schema.Types.ObjectId, ref: 'Table' },
     status: {
       type: String,
       enum: ['draft', 'paid', 'cancelled'],
@@ -72,29 +39,35 @@ const orderSchema = new mongoose.Schema(
     },
     kitchenStatus: {
       type: String,
-      enum: ['not_sent', 'to_cook', 'preparing', 'completed'],
-      default: 'not_sent',
+      enum: ['pending', 'in_progress', 'completed'],
+      default: 'pending',
     },
-    payment: {
-      method: {
-        type: String,
-        enum: ['cash', 'card', 'upi', null],
-        default: null,
-      },
-      amountReceived: { type: Number, default: 0 }, // for cash
-      changeDue: { type: Number, default: 0 }, // for cash
-      transactionRef: { type: String, default: '' }, // for card
-      upiTxnId: { type: String, default: '' }, // for upi
-      paidAt: { type: Date, default: null },
-    },
-    receiptSentTo: {
-      type: String,
-      default: '',
-    },
+    subtotal: { type: Number, default: 0 },
+    taxAmount: { type: Number, default: 0 },
+    discount: { type: Number, default: 0 },
+    discountType: { type: String, enum: ['fixed', 'percentage', 'coupon', 'promotion'] },
+    discountSource: String,
+    coupon: { type: mongoose.Schema.Types.ObjectId, ref: 'Coupon' },
+    promotion: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
+    posSession: { type: mongoose.Schema.Types.ObjectId, ref: 'POSSession' },
+    total: { type: Number, default: 0 },
+    payment: paymentSchema,
+    notes: String,
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    paidAt: Date,
+    cancelledAt: Date,
+    cancelReason: String,
   },
   { timestamps: true }
 );
 
-orderSchema.index({ orderNumber: 'text' });
+orderSchema.pre('save', async function (next) {
+  if (!this.orderNumber) {
+    const count = await mongoose.model('Order').countDocuments();
+    this.orderNumber = `CV${String(count + 1).padStart(6, '0')}`;
+  }
+  next();
+});
 
-module.exports = mongoose.model('Order', orderSchema);
+const Order = mongoose.model('Order', orderSchema);
+export default Order;

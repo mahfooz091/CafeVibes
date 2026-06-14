@@ -1,40 +1,29 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const tableSchema = new mongoose.Schema(
   {
-    tableNumber: {
-      type: String,
-      required: [true, 'Table number is required'],
-      trim: true,
-    },
-    floor: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Floor',
-      required: [true, 'Floor is required'],
-    },
-    seats: {
-      type: Number,
-      required: [true, 'Number of seats is required'],
-      min: [1, 'At least 1 seat is required'],
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    name: { type: String, required: [true, 'Table name is required'], trim: true },
+    floor: { type: mongoose.Schema.Types.ObjectId, ref: 'Floor', required: true },
+    seatCount: { type: Number, required: true, min: 1, default: 4 },
     status: {
       type: String,
-      enum: ['available', 'occupied'],
+      enum: ['available', 'occupied', 'reserved', 'disabled'],
       default: 'available',
     },
-    currentOrder: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Order',
-      default: null,
+    shape: {
+      type: String,
+      enum: ['round', 'square', 'rectangle'],
+      default: 'square',
     },
+    x: { type: Number, default: 100 },
+    y: { type: Number, default: 100 },
+    reservationTime: { type: String, default: null },
+    isActive: { type: Boolean, default: true },
+    currentOrder: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
-tableSchema.index({ floor: 1, tableNumber: 1 }, { unique: true });
-
-module.exports = mongoose.model('Table', tableSchema);
+const Table = mongoose.model('Table', tableSchema);
+export default Table;

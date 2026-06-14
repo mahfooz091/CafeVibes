@@ -1,50 +1,24 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const promotionSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, 'Promotion name is required'],
-      trim: true,
-    },
-    appliesTo: {
-      type: String,
-      enum: ['product', 'order'],
-      required: true,
-    },
-    // Required when appliesTo === 'product'
-    product: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-      default: null,
-    },
-    minQuantity: {
-      type: Number,
-      default: null, // used when appliesTo === 'product'
-      min: 1,
-    },
-    // Required when appliesTo === 'order'
-    minOrderAmount: {
-      type: Number,
-      default: null, // used when appliesTo === 'order'
-      min: 0,
-    },
-    discountType: {
-      type: String,
-      enum: ['percentage', 'fixed'],
-      required: true,
-    },
-    discountValue: {
-      type: Number,
-      required: [true, 'Discount value is required'],
-      min: 0,
-    },
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
+    name: { type: String, required: true, trim: true },
+    description: { type: String, trim: true },
+    type: { type: String, enum: ['fixed', 'percentage'], required: true },
+    value: { type: Number, required: true, min: 0 },
+    minOrderAmount: { type: Number, default: 0 },
+    minQuantity: { type: Number, default: 0, min: 0 },
+    maxDiscount: { type: Number },
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Category' }],
+    products: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
+    validFrom: { type: Date, default: Date.now },
+    validUntil: { type: Date },
+    isActive: { type: Boolean, default: true },
+    autoApply: { type: Boolean, default: false },
+    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model('Promotion', promotionSchema);
+const Promotion = mongoose.model('Promotion', promotionSchema);
+export default Promotion;

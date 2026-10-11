@@ -78,6 +78,26 @@ const Login = () => {
             <p className="text-gray-500 text-sm mt-1">Enter your credentials to continue</p>
           </div>
 
+          {/* Quick Admin Credentials Helper */}
+          <div className="bg-primary/5 border border-primary/20 rounded-xl p-3.5 text-xs text-gray-700 space-y-2">
+            <div className="flex items-center justify-between font-semibold text-primary">
+              <span className="flex items-center gap-1.5">
+                <Coffee size={14} /> Default Admin Credentials:
+              </span>
+              <button
+                type="button"
+                onClick={() => setForm({ email: 'admin@cafevibes.com', password: 'password123' })}
+                className="text-primary hover:text-primary-800 underline font-semibold cursor-pointer"
+              >
+                Auto-fill Admin
+              </button>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-gray-600 gap-1 bg-white/70 rounded-lg px-2.5 py-1.5 border border-gray-100">
+              <span>Email: <strong className="font-mono text-gray-800">admin@cafevibes.com</strong></span>
+              <span>Password: <strong className="font-mono text-gray-800">password123</strong></span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
               label="Email"

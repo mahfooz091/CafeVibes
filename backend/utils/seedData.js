@@ -75,11 +75,11 @@ const seedDatabase = async () => {
   }
 
   // 3. Seed Default Admin User
-  let adminUser = await User.findOne({ role: 'admin' });
+  let adminUser = await User.findOne({ email: 'admin@cafevibes.com' });
   if (!adminUser) {
     console.log('Seeding default admin user...');
     adminUser = await User.create({
-      name: 'Default Admin',
+      name: 'CafeVibes Admin',
       email: 'admin@cafevibes.com',
       password: 'password123',
       role: 'admin',

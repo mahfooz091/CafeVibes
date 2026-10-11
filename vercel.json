@@ -9,7 +9,13 @@
       "root": "frontend",
       "framework": "vite",
       "outputDirectory": "dist",
-      "installCommand": "npm install --include=dev --include=optional"
+      "installCommand": "npm install --include=dev --include=optional",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     }
   },
   "rewrites": [
@@ -46,8 +52,7 @@
     {
       "source": "/(.*)",
       "destination": {
-        "service": "frontend",
-        "path": "/index.html"
+        "service": "frontend"
       }
     }
   ]

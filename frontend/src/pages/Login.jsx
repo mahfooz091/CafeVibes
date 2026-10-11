@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { Coffee, ArrowLeft, Sparkles, ShoppingBag } from 'lucide-react';
@@ -14,6 +14,9 @@ const Login = () => {
   const [demoLoading, setDemoLoading] = useState(false);
   const { login, demoLogin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath = location.state?.from?.pathname || null;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,7 +24,8 @@ const Login = () => {
     try {
       const user = await login(form);
       toast.success('Welcome back!');
-      navigate(user.role === 'admin' ? '/dashboard' : '/pos');
+      const target = redirectPath || (user.role === 'admin' ? '/dashboard' : '/pos');
+      navigate(target, { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally {
@@ -34,7 +38,8 @@ const Login = () => {
     try {
       await demoLogin('admin');
       toast.success('Welcome to CafeVibes Admin Demo (Read-Only Mode)!');
-      navigate('/dashboard');
+      const target = redirectPath || '/dashboard';
+      navigate(target, { replace: true });
     } catch (err) {
       toast.error(err.response?.data?.message || 'Admin demo login failed');
     } finally {

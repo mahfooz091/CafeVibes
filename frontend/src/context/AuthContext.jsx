@@ -5,8 +5,13 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem('user');
-    return stored ? JSON.parse(stored) : null;
+    try {
+      const stored = localStorage.getItem('user');
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      localStorage.removeItem('user');
+      return null;
+    }
   });
   const [loading, setLoading] = useState(true);
 
@@ -65,8 +70,11 @@ export const AuthProvider = ({ children }) => {
           const { data } = await authAPI.getMe();
           setUser(data.data);
           localStorage.setItem('user', JSON.stringify(data.data));
-        } catch {
-          clearAuth();
+        } catch (err) {
+          // If token is genuinely expired/invalid (401), clear credentials
+          if (err.response?.status === 401) {
+            clearAuth();
+          }
         }
       }
       setLoading(false);

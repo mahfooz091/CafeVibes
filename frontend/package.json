@@ -33,5 +33,9 @@
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.62.0",
     "@rollup/rollup-linux-x64-musl": "^4.62.0"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "esbuild@0.25.12": true
   }
 }

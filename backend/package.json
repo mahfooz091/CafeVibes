@@ -28,5 +28,9 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.9"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "esbuild@0.25.12": true
   }
 }

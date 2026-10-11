@@ -8,7 +8,7 @@
     "frontend": {
       "root": "frontend",
       "framework": "vite",
-      "installCommand": "npm install --include=optional"
+      "installCommand": "npm install --include=dev --include=optional"
     }
   },
   "rewrites": [

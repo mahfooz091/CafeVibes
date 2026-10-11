@@ -15,6 +15,11 @@ router.post('/logout', logout);
 router.get('/me', protect, getMe);
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
-router.get('/google/callback', passport.authenticate('google', { session: false, failureRedirect: `${process.env.CLIENT_URL}/login` }), googleCallback);
+router.get('/google/callback', (req, res, next) => {
+  const failureUrl = `${process.env.CLIENT_URL || ''}/login`;
+  passport.authenticate('google', { session: false, failureRedirect: failureUrl })(req, res, next);
+}, googleCallback);
+
+
 
 export default router;

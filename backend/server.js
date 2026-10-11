@@ -16,30 +16,36 @@ const PORT = process.env.PORT || 5000;
 
 // Start the Express HTTP and WebSocket server
 const startServer = async () => {
-  await connectDB();
-  await seedDatabase();
+  try {
+    await connectDB();
+    if (!process.env.VERCEL) {
+      await seedDatabase();
+    }
 
-  const server = http.createServer(app);
+    const server = http.createServer(app);
 
-  const io = new Server(server, {
-    cors: {
-      origin: process.env.CLIENT_URL || 'http://localhost:5173',
-      methods: ['GET', 'POST'],
-      credentials: true,
-    },
-  });
+    const io = new Server(server, {
+      cors: {
+        origin: process.env.CLIENT_URL || 'http://localhost:5173',
+        methods: ['GET', 'POST'],
+        credentials: true,
+      },
+    });
 
-  app.set('io', io);
-  initKitchenSocket(io);
+    app.set('io', io);
+    initKitchenSocket(io);
 
-  server.listen(PORT, () => {
-    console.log(`CafeVibes server running on port ${PORT}`);
-  });
+    server.listen(PORT, () => {
+      console.log(`CafeVibes server running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+  }
 };
 
-startServer().catch((err) => {
-  console.error('Failed to start server:', err);
-  process.exit(1);
-});
+startServer();
 
 export default app;

@@ -112,6 +112,7 @@ export const googleCallback = asyncHandler(async (req, res) => {
   const accessToken = generateAccessToken(req.user._id);
   const refreshToken = generateRefreshToken(req.user._id);
   await createSession(req.user._id, refreshToken, req.headers['user-agent'], req.ip);
-  setTokenCookies(res, accessToken, refreshToken);
-  res.redirect(`${process.env.CLIENT_URL}/auth/callback?token=${accessToken}&refresh=${refreshToken}`);
+  const clientUrl = process.env.CLIENT_URL || '';
+  res.redirect(`${clientUrl}/auth/callback?token=${accessToken}&refresh=${refreshToken}`);
 });
+

@@ -22,6 +22,10 @@ const errorHandler = (err, _req, res, _next) => {
     message = `Invalid ${err.path}: ${err.value}`;
   }
 
+  if (process.env.NODE_ENV === 'production' && statusCode === 500 && !(err instanceof ApiError)) {
+    message = 'An unexpected internal server error occurred';
+  }
+
   if (process.env.NODE_ENV !== 'production') {
     console.error(err);
   }

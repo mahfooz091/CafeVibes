@@ -8,6 +8,7 @@ import {
   generateRefreshToken,
   createSession,
   setTokenCookies,
+  clearTokenCookies,
 } from '../utils/generateTokens.js';
 
 const sendAuthResponse = async (user, req, res, statusCode = 200) => {
@@ -34,22 +35,31 @@ const sendAuthResponse = async (user, req, res, statusCode = 200) => {
 };
 
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
+  const normalizedEmail = email.toLowerCase().trim();
 
-  const existing = await User.findOne({ email });
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing) throw new ApiError(400, 'Email already registered');
 
+  // Prevent privilege escalation: self-registration never grants admin unless system has 0 users
   const userCount = await User.countDocuments();
-  const userRole = userCount === 0 ? 'admin' : role || 'employee';
+  const userRole = userCount === 0 ? 'admin' : 'employee';
 
-  const user = await User.create({ name, email, password, role: userRole, isVerified: true });
+  const user = await User.create({
+    name: name.trim(),
+    email: normalizedEmail,
+    password,
+    role: userRole,
+    isVerified: true,
+  });
   await sendAuthResponse(user, req, res, 201);
 });
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
+  const normalizedEmail = email?.toLowerCase().trim();
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email: normalizedEmail }).select('+password');
   if (!user || !(await user.comparePassword(password))) {
     throw new ApiError(401, 'Invalid email or password');
   }
@@ -89,8 +99,7 @@ export const logout = asyncHandler(async (req, res) => {
     await Session.findOneAndUpdate({ refreshToken: token }, { isRevoked: true });
   }
 
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  clearTokenCookies(res);
   res.json({ success: true, message: 'Logged out successfully' });
 });
 

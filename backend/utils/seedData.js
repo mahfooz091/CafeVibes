@@ -74,17 +74,32 @@ const seedDatabase = async () => {
     }
   }
 
-  // 3. Seed Default Admin User
-  let adminUser = await User.findOne({ email: 'admin@cafevibes.com' });
-  if (!adminUser) {
-    console.log('Seeding default admin user...');
-    adminUser = await User.create({
-      name: 'CafeVibes Admin',
-      email: 'admin@cafevibes.com',
-      password: 'password123',
-      role: 'admin',
-      isVerified: true
-    });
+  // 3. Seed Initial Admin User (Configured via deployment environment variables only)
+  const initialAdminEmail = process.env.INITIAL_ADMIN_EMAIL;
+  const initialAdminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+
+  if (initialAdminEmail && initialAdminPassword) {
+    if (initialAdminPassword.length < 8) {
+      console.warn('⚠️ INITIAL_ADMIN_PASSWORD must be at least 8 characters. Admin provisioning skipped.');
+    } else {
+      const normalizedEmail = initialAdminEmail.toLowerCase().trim();
+      let adminUser = await User.findOne({ email: normalizedEmail });
+      if (!adminUser) {
+        console.log(`Provisioning initial administrator account for ${normalizedEmail}...`);
+        await User.create({
+          name: process.env.INITIAL_ADMIN_NAME || 'CafeVibes Admin',
+          email: normalizedEmail,
+          password: initialAdminPassword,
+          role: 'admin',
+          isVerified: true,
+        });
+      }
+    }
+  } else {
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (!existingAdmin) {
+      console.log('ℹ️ No administrator account exists. Configure INITIAL_ADMIN_EMAIL & INITIAL_ADMIN_PASSWORD or register the first user.');
+    }
   }
 
   // 4. Seed Historical Sessions & Orders for Reports
@@ -96,13 +111,13 @@ const seedDatabase = async () => {
     // Reset customer order stats to zero
     await Customer.updateMany({}, { totalOrders: 0, totalSpent: 0 });
     
-    // Seed default customers first
+    // Seed default synthetic customers first
     let customers = await Customer.find();
     if (customers.length === 0) {
       customers = [
-        await Customer.create({ name: 'Mahfooz Alam', email: 'mahfooz@example.com', phone: '9876543210' }),
-        await Customer.create({ name: 'Jane Smith', email: 'jane@example.com', phone: '9876543211' }),
-        await Customer.create({ name: 'John Doe', email: 'john@example.com', phone: '9876543212' }),
+        await Customer.create({ name: 'Guest Patron A', email: 'guest.a@example.com', phone: '5550100001' }),
+        await Customer.create({ name: 'Guest Patron B', email: 'guest.b@example.com', phone: '5550100002' }),
+        await Customer.create({ name: 'Guest Patron C', email: 'guest.c@example.com', phone: '5550100003' }),
       ];
     }
 

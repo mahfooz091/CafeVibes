@@ -41,20 +41,23 @@ const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:5000',
   'http://localhost:5001',
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim()) : []),
 ].filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, server-to-server)
       if (!origin) return callback(null, true);
-      if (
-        allowedOrigins.includes(origin) ||
-        origin.endsWith('.vercel.app') ||
-        /^https?:\/\/localhost(:\d+)?$/.test(origin)
-      ) {
+
+      const isAllowedLocal = /^https?:\/\/localhost(:\d+)?$/.test(origin);
+      const isAllowedVercel = /^https:\/\/[a-zA-Z0-9_-]+\.vercel\.app$/.test(origin);
+      const isConfiguredOrigin = allowedOrigins.includes(origin);
+
+      if (isConfiguredOrigin || isAllowedLocal || isAllowedVercel) {
         return callback(null, true);
       }
-      return callback(null, true);
+      return callback(null, false);
     },
     credentials: true,
   })
@@ -95,8 +98,20 @@ app.get(['/', '/api', '/api/health', '/health'], (_req, res) => {
   });
 });
 
-// Seed endpoint for initial production database population
-app.all(['/api/seed', '/seed'], async (_req, res) => {
+// Seed endpoint: Protected by secret key (ADMIN_SEED_SECRET) in production or restricted to development
+app.all(['/api/seed', '/seed'], async (req, res) => {
+  const seedSecret = process.env.ADMIN_SEED_SECRET;
+  const providedKey = req.headers['x-seed-key'] || req.query.key;
+
+  if (process.env.NODE_ENV === 'production') {
+    if (!seedSecret || providedKey !== seedSecret) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: Access to database seeding endpoint requires a valid secret key.',
+      });
+    }
+  }
+
   try {
     if (mongoose.connection.readyState !== 1) {
       await connectDB();
@@ -105,7 +120,11 @@ app.all(['/api/seed', '/seed'], async (_req, res) => {
     res.json({ success: true, message: 'Database successfully seeded with default data!' });
   } catch (error) {
     console.error('Database seed error:', error);
-    res.status(500).json({ success: false, message: 'Failed to seed database', error: error.message });
+    res.status(500).json({
+      success: false,
+      message: 'Failed to seed database',
+      ...(process.env.NODE_ENV !== 'production' && { error: error.message }),
+    });
   }
 });
 

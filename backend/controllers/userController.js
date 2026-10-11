@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Session from '../models/Session.js';
 import ApiError from '../utils/ApiError.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
@@ -14,14 +15,19 @@ export const createUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Name, email, and password are required');
   }
 
-  const existing = await User.findOne({ email });
+  if (password.length < 8) {
+    throw new ApiError(400, 'Password must be at least 8 characters long');
+  }
+
+  const normalizedEmail = email.toLowerCase().trim();
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing) {
     throw new ApiError(400, 'Email is already registered');
   }
 
   const user = await User.create({
-    name,
-    email,
+    name: name.trim(),
+    email: normalizedEmail,
     password,
     role: role || 'employee',
     isVerified: true,
@@ -42,8 +48,8 @@ export const createUser = asyncHandler(async (req, res) => {
 
 export const changeUserPassword = asyncHandler(async (req, res) => {
   const { password } = req.body;
-  if (!password || password.length < 6) {
-    throw new ApiError(400, 'Password must be at least 6 characters long');
+  if (!password || password.length < 8) {
+    throw new ApiError(400, 'Password must be at least 8 characters long');
   }
 
   const user = await User.findById(req.params.id);
@@ -53,6 +59,9 @@ export const changeUserPassword = asyncHandler(async (req, res) => {
 
   user.password = password;
   await user.save();
+
+  // Invalidate any active refresh sessions so old credentials cannot be reused
+  await Session.updateMany({ user: user._id }, { isRevoked: true });
 
   res.json({ success: true, message: 'Password updated successfully' });
 });
@@ -71,6 +80,11 @@ export const toggleUserArchive = asyncHandler(async (req, res) => {
   user.isActive = !user.isActive;
   await user.save();
 
+  // If deactivated, revoke all active sessions immediately
+  if (!user.isActive) {
+    await Session.updateMany({ user: user._id }, { isRevoked: true });
+  }
+
   res.json({ success: true, data: user, message: `Account successfully ${user.isActive ? 'activated' : 'archived'}` });
 });
 
@@ -86,5 +100,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
   }
 
   await User.findByIdAndDelete(user._id);
+  await Session.deleteMany({ user: user._id });
+
   res.json({ success: true, message: 'User deleted successfully' });
 });

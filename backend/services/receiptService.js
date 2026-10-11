@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import ApiError from '../utils/ApiError.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -129,7 +130,12 @@ export const sendReceiptEmail = async (email, order) => {
     });
     fromAddress = `"CafeVibes" <${process.env.EMAIL_USER}>`;
   } else {
-    // Fallback: Create ethereal test account for development
+    // In production, do not contact external mock services or hang
+    if (process.env.NODE_ENV === 'production') {
+      throw new ApiError(503, 'Email receipt service is not configured. Please set SMTP credentials in environment variables.');
+    }
+
+    // Fallback: Create ethereal test account for local development
     console.log('No SMTP config found in .env. Creating Ethereal test account...');
     const testAccount = await nodemailer.createTestAccount();
     transporter = nodemailer.createTransport({
@@ -138,8 +144,8 @@ export const sendReceiptEmail = async (email, order) => {
       secure: false,
       auth: {
         user: testAccount.user,
-        pass: testAccount.pass
-      }
+        pass: testAccount.pass,
+      },
     });
     fromAddress = '"CafeVibes Test" <no-reply@cafevibes.com>';
   }
@@ -153,7 +159,10 @@ export const sendReceiptEmail = async (email, order) => {
     html,
   });
 
-  if (!process.env.SMTP_HOST) {
-    console.log('Preview URL for mock email:', nodemailer.getTestMessageUrl(info));
+  if (!process.env.SMTP_HOST && !process.env.EMAIL_USER) {
+    const previewUrl = nodemailer.getTestMessageUrl(info);
+    if (previewUrl) {
+      console.log('Preview URL for mock email:', previewUrl);
+    }
   }
 };

@@ -108,18 +108,26 @@ const DashboardLayout = ({ children }) => {
               DEMO MODE
             </span>
             <span className="hidden md:inline text-white/90">
-              Read-only exploration session — All dashboards, menus, and reports are interactive. State changes and transactions are disabled.
+              Admin Demo (Read-only) — All dashboards, menus, and reports are interactive. Changes are disabled.
             </span>
             <span className="md:hidden text-white/90">
-              Read-only Demo — Changes disabled.
+              Admin Demo — Read-only.
             </span>
           </div>
-          <button
-            onClick={handleLogout}
-            className="bg-white/20 hover:bg-white/30 active:bg-white/40 text-white px-2.5 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors flex items-center gap-1 shadow-sm"
-          >
-            <LogOut size={12} /> Exit Demo
-          </button>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/customer-demo"
+              className="bg-white/15 hover:bg-white/25 active:bg-white/35 text-white px-2.5 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors flex items-center gap-1 shadow-sm"
+            >
+              <ShoppingBag size={12} className="text-amber-200" /> Switch to Customer Demo
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="bg-white/20 hover:bg-white/30 active:bg-white/40 text-white px-2.5 py-0.5 rounded text-xs font-semibold cursor-pointer transition-colors flex items-center gap-1 shadow-sm"
+            >
+              <LogOut size={12} /> Exit Demo
+            </button>
+          </div>
         </div>
       )}
 

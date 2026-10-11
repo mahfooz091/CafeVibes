@@ -1,7 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './ProtectedRoute';
 
 import LandingPage from '../pages/LandingPage';
+import DemoSelect from '../pages/DemoSelect';
+import CustomerDemo from '../pages/CustomerDemo';
 import Login from '../pages/Login';
 import Signup from '../pages/Signup';
 import AuthCallback from '../pages/AuthCallback';
@@ -17,14 +19,19 @@ import FloorsTables from '../pages/FloorsTables';
 import Coupons from '../pages/Coupons';
 import Settings from '../pages/Settings';
 import Users from '../pages/Users';
+import NotFound from '../pages/NotFound';
 
 const AppRoutes = () => (
   <Routes>
+    {/* Public & Customer Exploration Routes */}
     <Route path="/" element={<LandingPage />} />
+    <Route path="/demo" element={<DemoSelect />} />
+    <Route path="/customer-demo" element={<CustomerDemo />} />
     <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
     <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
     <Route path="/auth/callback" element={<AuthCallback />} />
 
+    {/* Protected Administrative & Operations Routes */}
     <Route path="/dashboard" element={<ProtectedRoute roles={['admin']}><Dashboard /></ProtectedRoute>} />
     <Route path="/products" element={<ProtectedRoute roles={['admin']}><Products /></ProtectedRoute>} />
     <Route path="/categories" element={<ProtectedRoute roles={['admin']}><Categories /></ProtectedRoute>} />
@@ -39,7 +46,8 @@ const AppRoutes = () => (
     <Route path="/pos" element={<ProtectedRoute><POS /></ProtectedRoute>} />
     <Route path="/kitchen" element={<ProtectedRoute><KitchenDisplay /></ProtectedRoute>} />
 
-    <Route path="*" element={<Navigate to="/" replace />} />
+    {/* Application-level 404 Route */}
+    <Route path="*" element={<NotFound />} />
   </Routes>
 );
 

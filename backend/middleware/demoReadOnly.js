@@ -22,8 +22,9 @@ import {
  * 3. Guarantees 0% read or write pollution on the production database.
  */
 export const demoSecurityMiddleware = (req, res, next) => {
-  // Only engage for authenticated demo_viewer sessions
-  if (!req.user || req.user.role !== 'demo_viewer') {
+  // Only engage for authenticated demo sessions (admin or customer demo)
+  const isDemo = req.user?.role === 'demo_viewer' || req.user?.role === 'customer_demo';
+  if (!isDemo) {
     return next();
   }
 
@@ -31,13 +32,30 @@ export const demoSecurityMiddleware = (req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD' && req.method !== 'OPTIONS') {
     return res.status(403).json({
       success: false,
-      message: 'Read-only demo: this action is disabled in demo mode.',
+      message: 'Read-only demo: changes are disabled in this environment.',
       isDemoMode: true,
     });
   }
 
   // 2. ISOLATED DEMONSTRATION DATA ROUTING
   const cleanPath = req.originalUrl.split('?')[0].replace(/\/+$/, '');
+
+  // 3. STRICT CUSTOMER DEMO BOUNDARY: customer demo cannot access admin APIs
+  if (req.user.role === 'customer_demo') {
+    const isPublicCustomerRoute =
+      cleanPath.startsWith('/api/products') ||
+      cleanPath.startsWith('/api/categories') ||
+      cleanPath.startsWith('/api/coupons') ||
+      cleanPath === '/api/auth/me';
+
+    if (!isPublicCustomerRoute) {
+      return res.status(403).json({
+        success: false,
+        message: 'Forbidden: customer demo sessions cannot access administrative APIs.',
+        isDemoMode: true,
+      });
+    }
+  }
 
   // Products
   if (cleanPath === '/api/products') {

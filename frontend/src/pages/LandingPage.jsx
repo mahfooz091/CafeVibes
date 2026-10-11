@@ -22,18 +22,8 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [demoLoading, setDemoLoading] = useState(false);
 
-  const handleExploreDemo = async () => {
-    setDemoLoading(true);
-    try {
-      await demoLogin();
-      toast.success('Welcome to CafeVibes Demo (Read-Only Mode)!');
-      navigate('/dashboard');
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Demo access error');
-      navigate('/login');
-    } finally {
-      setDemoLoading(false);
-    }
+  const handleExploreDemo = () => {
+    navigate('/demo');
   };
 
   return (

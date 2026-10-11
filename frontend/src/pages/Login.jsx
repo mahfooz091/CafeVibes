@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Coffee, ArrowLeft, Sparkles } from 'lucide-react';
+import { Coffee, ArrowLeft, Sparkles, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -29,16 +29,29 @@ const Login = () => {
     }
   };
 
-  const handleDemo = async () => {
-    setDemoLoading(true);
+  const handleAdminDemo = async () => {
+    setDemoLoading('admin');
     try {
-      await demoLogin();
-      toast.success('Welcome to CafeVibes Demo (Read-Only Mode)!');
+      await demoLogin('admin');
+      toast.success('Welcome to CafeVibes Admin Demo (Read-Only Mode)!');
       navigate('/dashboard');
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Demo login failed');
+      toast.error(err.response?.data?.message || 'Admin demo login failed');
     } finally {
-      setDemoLoading(false);
+      setDemoLoading(null);
+    }
+  };
+
+  const handleCustomerDemo = async () => {
+    setDemoLoading('customer');
+    try {
+      await demoLogin('customer');
+      toast.success('Welcome to CafeVibes Customer Demo!');
+      navigate('/customer-demo');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Customer demo login failed');
+    } finally {
+      setDemoLoading(null);
     }
   };
 
@@ -113,19 +126,33 @@ const Login = () => {
               </span>
             </div>
 
-            <Button
-              type="button"
-              onClick={handleDemo}
-              loading={demoLoading}
-              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 cursor-pointer font-semibold text-sm"
-            >
-              <Sparkles size={16} className="text-amber-200" />
-              Continue as Demo User (Read-Only)
-            </Button>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                type="button"
+                onClick={handleAdminDemo}
+                loading={demoLoading === 'admin'}
+                className="w-full bg-primary hover:bg-primary-600 text-white shadow-sm flex items-center justify-center gap-1.5 cursor-pointer font-semibold text-xs py-2.5"
+              >
+                <Sparkles size={14} className="text-amber-300" />
+                Admin Demo
+              </Button>
+              <Button
+                type="button"
+                onClick={handleCustomerDemo}
+                loading={demoLoading === 'customer'}
+                className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white shadow-sm flex items-center justify-center gap-1.5 cursor-pointer font-semibold text-xs py-2.5"
+              >
+                <ShoppingBag size={14} className="text-amber-200" />
+                Customer Demo
+              </Button>
+            </div>
 
-            <p className="text-[11px] text-center text-gray-500">
-              🔒 Safe exploration mode: Dashboards, POS & KDS are interactive. Data modifications are disabled.
-            </p>
+            <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1">
+              <span>🔒 Changes disabled & isolated</span>
+              <Link to="/demo" className="text-primary hover:underline font-semibold">
+                Explore Demo Hub →
+              </Link>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

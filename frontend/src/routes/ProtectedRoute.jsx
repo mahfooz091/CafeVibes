@@ -16,6 +16,11 @@ export const ProtectedRoute = ({ children, roles }) => {
 
   if (!user) return <Navigate to="/login" state={{ from: location }} replace />;
 
+  // Customer demo sessions are restricted strictly to customer-facing pages
+  if (user.role === 'customer_demo') {
+    return <Navigate to="/customer-demo" replace />;
+  }
+
   // Demo viewers are granted read-only exploration access across all modules
   const isAllowed = !roles || roles.includes(user.role) || user.role === 'demo_viewer';
   if (!isAllowed) {
@@ -37,6 +42,9 @@ export const PublicRoute = ({ children }) => {
   }
 
   if (user) {
+    if (user.role === 'customer_demo') {
+      return <Navigate to="/customer-demo" replace />;
+    }
     return <Navigate to={user.role === 'admin' || user.role === 'demo_viewer' ? '/dashboard' : '/pos'} replace />;
   }
 

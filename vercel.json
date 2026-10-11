@@ -8,6 +8,7 @@
     "frontend": {
       "root": "frontend",
       "framework": "vite",
+      "outputDirectory": "dist",
       "installCommand": "npm install --include=dev --include=optional"
     }
   },
@@ -25,9 +26,28 @@
       }
     },
     {
-      "source": "/(.*)",
+      "source": "/assets/(.*)",
       "destination": {
         "service": "frontend"
+      }
+    },
+    {
+      "source": "/favicon.(.*)",
+      "destination": {
+        "service": "frontend"
+      }
+    },
+    {
+      "source": "/logo.png",
+      "destination": {
+        "service": "frontend"
+      }
+    },
+    {
+      "source": "/(.*)",
+      "destination": {
+        "service": "frontend",
+        "path": "/index.html"
       }
     }
   ]

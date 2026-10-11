@@ -18,12 +18,13 @@ export const protect = asyncHandler(async (req, res, next) => {
     let user = await User.findById(decoded.id).select('-password');
 
     // Resilient fallback for demo visitor tokens during cold start
-    if (!user && decoded.role === 'demo_viewer') {
+    if (!user && (decoded.role === 'demo_viewer' || decoded.role === 'customer_demo')) {
+      const isCustomer = decoded.role === 'customer_demo';
       user = {
         _id: decoded.id,
-        name: 'Demo Visitor',
-        email: 'demo.visitor@cafevibes.com',
-        role: 'demo_viewer',
+        name: isCustomer ? 'Demo Customer' : 'Demo Administrator',
+        email: isCustomer ? 'customer.demo@cafevibes.com' : 'demo.visitor@cafevibes.com',
+        role: decoded.role,
         isActive: true,
       };
     }

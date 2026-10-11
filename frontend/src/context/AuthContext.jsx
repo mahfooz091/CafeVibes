@@ -75,6 +75,7 @@ export const AuthProvider = ({ children }) => {
   }, [clearAuth]);
 
   const isDemo = user?.role === 'demo_viewer';
+  const isCustomerDemo = user?.role === 'customer_demo';
   const isAdmin = user?.role === 'admin';
   const canExploreAdmin = isAdmin || isDemo;
 
@@ -90,6 +91,7 @@ export const AuthProvider = ({ children }) => {
         handleOAuthCallback,
         isAdmin,
         isDemo,
+        isCustomerDemo,
         canExploreAdmin,
       }}
     >

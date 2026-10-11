@@ -127,8 +127,12 @@ export const googleCallback = asyncHandler(async (req, res) => {
 });
 
 export const demoLogin = asyncHandler(async (req, res) => {
-  const demoEmail = 'demo.visitor@cafevibes.com';
-  const demoName = 'Demo Visitor';
+  const requestedRole = (req.body?.role || req.query?.role || 'admin').toLowerCase();
+  const isCustomer = requestedRole === 'customer';
+
+  const demoEmail = isCustomer ? 'customer.demo@cafevibes.com' : 'demo.visitor@cafevibes.com';
+  const demoName = isCustomer ? 'Demo Customer' : 'Demo Administrator';
+  const targetRole = isCustomer ? 'customer_demo' : 'demo_viewer';
 
   let user = await User.findOne({ email: demoEmail });
 
@@ -138,7 +142,7 @@ export const demoLogin = asyncHandler(async (req, res) => {
       name: demoName,
       email: demoEmail,
       password: randomPassword,
-      role: 'demo_viewer',
+      role: targetRole,
       isVerified: true,
       isActive: true,
     });
@@ -148,8 +152,8 @@ export const demoLogin = asyncHandler(async (req, res) => {
       user.isActive = true;
       needsSave = true;
     }
-    if (user.role !== 'demo_viewer') {
-      user.role = 'demo_viewer';
+    if (user.role !== targetRole) {
+      user.role = targetRole;
       needsSave = true;
     }
     if (needsSave) {

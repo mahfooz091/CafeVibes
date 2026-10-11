@@ -13,8 +13,8 @@ import {
 } from '../utils/generateTokens.js';
 
 const sendAuthResponse = async (user, req, res, statusCode = 200) => {
-  const accessToken = generateAccessToken(user._id);
-  const refreshToken = generateRefreshToken(user._id);
+  const accessToken = generateAccessToken(user._id, user.role);
+  const refreshToken = generateRefreshToken(user._id, user.role);
 
   await createSession(user._id, refreshToken, req.headers['user-agent'], req.ip);
   setTokenCookies(res, accessToken, refreshToken);
@@ -119,33 +119,26 @@ export const getMe = asyncHandler(async (req, res) => {
 
 export const googleCallback = asyncHandler(async (req, res) => {
   if (!req.user) throw new ApiError(401, 'Google authentication failed');
-  const accessToken = generateAccessToken(req.user._id);
-  const refreshToken = generateRefreshToken(req.user._id);
+  const accessToken = generateAccessToken(req.user._id, req.user.role);
+  const refreshToken = generateRefreshToken(req.user._id, req.user.role);
   await createSession(req.user._id, refreshToken, req.headers['user-agent'], req.ip);
   const clientUrl = process.env.CLIENT_URL || '';
   res.redirect(`${clientUrl}/auth/callback?token=${accessToken}&refresh=${refreshToken}`);
 });
 
 export const demoLogin = asyncHandler(async (req, res) => {
-  const { role = 'admin' } = req.body;
-  const targetRole = role === 'employee' || role === 'staff' ? 'employee' : 'admin';
-
-  const demoEmail = targetRole === 'admin'
-    ? 'demo.admin@cafevibes.com'
-    : 'demo.staff@cafevibes.com';
-  const demoName = targetRole === 'admin'
-    ? 'Demo Administrator'
-    : 'Demo Cashier / Staff';
+  const demoEmail = 'demo.visitor@cafevibes.com';
+  const demoName = 'Demo Visitor';
 
   let user = await User.findOne({ email: demoEmail });
 
   if (!user) {
-    const randomPassword = crypto.randomBytes(16).toString('hex') + 'A1!';
+    const randomPassword = crypto.randomBytes(24).toString('hex') + 'A1!';
     user = await User.create({
       name: demoName,
       email: demoEmail,
       password: randomPassword,
-      role: targetRole,
+      role: 'demo_viewer',
       isVerified: true,
       isActive: true,
     });
@@ -155,8 +148,8 @@ export const demoLogin = asyncHandler(async (req, res) => {
       user.isActive = true;
       needsSave = true;
     }
-    if (user.role !== targetRole) {
-      user.role = targetRole;
+    if (user.role !== 'demo_viewer') {
+      user.role = 'demo_viewer';
       needsSave = true;
     }
     if (needsSave) {

@@ -74,8 +74,25 @@ export const AuthProvider = ({ children }) => {
     initAuth();
   }, [clearAuth]);
 
+  const isDemo = user?.role === 'demo_viewer';
+  const isAdmin = user?.role === 'admin';
+  const canExploreAdmin = isAdmin || isDemo;
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, demoLogin, logout, handleOAuthCallback, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        demoLogin,
+        logout,
+        handleOAuthCallback,
+        isAdmin,
+        isDemo,
+        canExploreAdmin,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

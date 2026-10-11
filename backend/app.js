@@ -100,6 +100,14 @@ app.get(['/', '/api', '/api/health', '/health'], (_req, res) => {
 
 // Seed endpoint: Protected by secret key (ADMIN_SEED_SECRET) in production or restricted to development
 app.all(['/api/seed', '/seed'], async (req, res) => {
+  if (req.user?.role === 'demo_viewer') {
+    return res.status(403).json({
+      success: false,
+      message: 'Read-only demo: database seeding is disabled in demo mode.',
+      isDemoMode: true,
+    });
+  }
+
   const seedSecret = process.env.ADMIN_SEED_SECRET;
   const providedKey = req.headers['x-seed-key'] || req.query.key;
 

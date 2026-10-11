@@ -1,4 +1,5 @@
 import axios from 'axios';
+import toast from 'react-hot-toast';
 import API_URL from '../utils/constants';
 
 const api = axios.create({
@@ -20,6 +21,11 @@ api.interceptors.response.use(
     const isAuthRequest = originalRequest?.url?.includes('/auth/login') ||
                           originalRequest?.url?.includes('/auth/register') ||
                           originalRequest?.url?.includes('/auth/refresh');
+
+    if (error.response?.status === 403 && error.response?.data?.isDemoMode) {
+      toast.error(error.response.data.message || 'Read-only demo: this action is disabled in demo mode.');
+      return Promise.reject(error);
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
       originalRequest._retry = true;

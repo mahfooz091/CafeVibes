@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import Session from '../models/Session.js';
 
-export const generateAccessToken = (userId) =>
-  jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+export const generateAccessToken = (userId, role = 'employee') =>
+  jwt.sign({ id: userId, role }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || '15m',
   });
 
-export const generateRefreshToken = (userId) =>
-  jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET, {
+export const generateRefreshToken = (userId, role = 'employee') =>
+  jwt.sign({ id: userId, role }, process.env.JWT_REFRESH_SECRET, {
     expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
   });
 

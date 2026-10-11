@@ -103,30 +103,15 @@ const seedDatabase = async () => {
     }
   }
 
-  // 3b. Seed Dedicated Demo Accounts for Visitor Exploration
-  const demoAdminEmail = 'demo.admin@cafevibes.com';
-  let demoAdmin = await User.findOne({ email: demoAdminEmail });
-  if (!demoAdmin) {
-    const randomPassword = crypto.randomBytes(16).toString('hex') + 'A1!';
+  const demoVisitorEmail = 'demo.visitor@cafevibes.com';
+  let demoVisitor = await User.findOne({ email: demoVisitorEmail });
+  if (!demoVisitor) {
+    const randomPassword = crypto.randomBytes(24).toString('hex') + 'A1!';
     await User.create({
-      name: 'Demo Administrator',
-      email: demoAdminEmail,
+      name: 'Demo Visitor',
+      email: demoVisitorEmail,
       password: randomPassword,
-      role: 'admin',
-      isVerified: true,
-      isActive: true,
-    });
-  }
-
-  const demoStaffEmail = 'demo.staff@cafevibes.com';
-  let demoStaff = await User.findOne({ email: demoStaffEmail });
-  if (!demoStaff) {
-    const randomPassword = crypto.randomBytes(16).toString('hex') + 'A1!';
-    await User.create({
-      name: 'Demo Staff / Cashier',
-      email: demoStaffEmail,
-      password: randomPassword,
-      role: 'employee',
+      role: 'demo_viewer',
       isVerified: true,
       isActive: true,
     });

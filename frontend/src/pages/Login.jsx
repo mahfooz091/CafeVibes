@@ -11,7 +11,7 @@ import API_URL from '../utils/constants';
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const [demoLoading, setDemoLoading] = useState(null);
+  const [demoLoading, setDemoLoading] = useState(false);
   const { login, demoLogin } = useAuth();
   const navigate = useNavigate();
 
@@ -29,16 +29,16 @@ const Login = () => {
     }
   };
 
-  const handleDemo = async (role) => {
-    setDemoLoading(role);
+  const handleDemo = async () => {
+    setDemoLoading(true);
     try {
-      const user = await demoLogin(role);
-      toast.success(`Welcome to CafeVibes Demo (${user.role === 'admin' ? 'Admin' : 'Staff'})!`);
-      navigate(user.role === 'admin' ? '/dashboard' : '/pos');
+      await demoLogin();
+      toast.success('Welcome to CafeVibes Demo (Read-Only Mode)!');
+      navigate('/dashboard');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Demo login failed');
     } finally {
-      setDemoLoading(null);
+      setDemoLoading(false);
     }
   };
 
@@ -93,7 +93,7 @@ const Login = () => {
           </div>
 
           {/* Quick Visitor Demo Access Card */}
-          <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-primary/10 border border-amber-500/30 rounded-2xl p-4 space-y-2.5">
+          <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-primary/10 border border-amber-500/30 rounded-2xl p-4 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="p-1 rounded-lg bg-amber-500/20 text-amber-700">
@@ -108,54 +108,24 @@ const Login = () => {
                   </p>
                 </div>
               </div>
-              <span className="text-[10px] bg-amber-500/20 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase">
-                Instant
+              <span className="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                Read-Only Tour
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-1">
-              <button
-                type="button"
-                onClick={() => handleDemo('admin')}
-                disabled={demoLoading !== null}
-                className="flex flex-col items-start p-2.5 rounded-xl bg-white/90 hover:bg-white border border-amber-200/80 hover:border-primary hover:shadow-sm transition-all text-left cursor-pointer group disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-gray-800 group-hover:text-primary transition-colors flex items-center gap-1">
-                    👑 Demo Admin
-                  </span>
-                  {demoLoading === 'admin' ? (
-                    <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <span className="text-[10px] text-primary font-bold">Try →</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-gray-500 mt-0.5">
-                  POS, Reports, Users & Settings
-                </span>
-              </button>
+            <Button
+              type="button"
+              onClick={handleDemo}
+              loading={demoLoading}
+              className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white shadow-md shadow-amber-600/20 flex items-center justify-center gap-2 cursor-pointer font-semibold text-sm"
+            >
+              <Sparkles size={16} className="text-amber-200" />
+              Continue as Demo User (Read-Only)
+            </Button>
 
-              <button
-                type="button"
-                onClick={() => handleDemo('employee')}
-                disabled={demoLoading !== null}
-                className="flex flex-col items-start p-2.5 rounded-xl bg-white/90 hover:bg-white border border-amber-200/80 hover:border-primary hover:shadow-sm transition-all text-left cursor-pointer group disabled:opacity-50"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="text-xs font-bold text-gray-800 group-hover:text-primary transition-colors flex items-center gap-1">
-                    ☕ Demo Staff
-                  </span>
-                  {demoLoading === 'employee' ? (
-                    <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <span className="text-[10px] text-primary font-bold">Try →</span>
-                  )}
-                </div>
-                <span className="text-[10px] text-gray-500 mt-0.5">
-                  POS Register & Kitchen KDS
-                </span>
-              </button>
-            </div>
+            <p className="text-[11px] text-center text-gray-500">
+              🔒 Safe exploration mode: Dashboards, POS & KDS are interactive. Data modifications are disabled.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

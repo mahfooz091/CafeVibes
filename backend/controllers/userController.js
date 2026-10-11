@@ -57,7 +57,7 @@ export const changeUserPassword = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'User not found');
   }
 
-  if (user.email === 'demo.admin@cafevibes.com' || user.email === 'demo.staff@cafevibes.com') {
+  if (user.role === 'demo_viewer' || user.email.startsWith('demo.')) {
     throw new ApiError(400, 'Demo account passwords cannot be changed.');
   }
 
@@ -81,7 +81,7 @@ export const toggleUserArchive = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Cannot archive your own administrator account');
   }
 
-  if (user.email === 'demo.admin@cafevibes.com' || user.email === 'demo.staff@cafevibes.com') {
+  if (user.role === 'demo_viewer' || user.email.startsWith('demo.')) {
     throw new ApiError(400, 'Demo accounts cannot be deactivated as they are required for visitor exploration.');
   }
 
@@ -107,7 +107,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
     throw new ApiError(400, 'Cannot delete your own administrator account');
   }
 
-  if (user.email === 'demo.admin@cafevibes.com' || user.email === 'demo.staff@cafevibes.com') {
+  if (user.role === 'demo_viewer' || user.email.startsWith('demo.')) {
     throw new ApiError(400, 'Demo accounts cannot be deleted as they are required for visitor exploration.');
   }
 

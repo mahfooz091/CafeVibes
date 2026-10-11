@@ -397,3 +397,107 @@ export const getDemoDashboardReports = () => {
     recentOrders: demoOrders,
   };
 };
+
+export const getDemoDashboardStats = (_params = {}) => {
+  return {
+    revenue: 142850,
+    totalOrders: 284,
+    avgOrderValue: 502.99,
+    todayRevenue: 16840,
+    todayOrders: 32,
+  };
+};
+
+export const getDemoSalesTrend = (_params = {}) => {
+  return [
+    { date: '2026-10-05', revenue: 12400, orders: 24 },
+    { date: '2026-10-06', revenue: 14100, orders: 27 },
+    { date: '2026-10-07', revenue: 13850, orders: 26 },
+    { date: '2026-10-08', revenue: 15600, orders: 29 },
+    { date: '2026-10-09', revenue: 18900, orders: 36 },
+    { date: '2026-10-10', revenue: 22400, orders: 42 },
+    { date: '2026-10-11', revenue: 16840, orders: 32 },
+  ];
+};
+
+export const getDemoTopProductsReport = (_params = {}) => {
+  return [
+    { productId: '666100000000000000000005', name: 'Ceremonial Matcha Latte', quantity: 42, revenue: 10080 },
+    { productId: '666100000000000000000002', name: 'Vanilla Silk Cappuccino', quantity: 48, revenue: 8640 },
+    { productId: '666100000000000000000009', name: 'Smoked Avocado Toast', quantity: 26, revenue: 7280 },
+    { productId: '666100000000000000000003', name: 'Caramel Macchiato Reserve', quantity: 31, revenue: 6820 },
+    { productId: '666100000000000000000007', name: 'Flaky Almond Butter Croissant', quantity: 38, revenue: 6080 },
+    { productId: '666100000000000000000004', name: 'Kyoto Cold Brew', quantity: 29, revenue: 5800 },
+    { productId: '666100000000000000000010', name: 'Truffle Mushroom Panini', quantity: 18, revenue: 5760 },
+  ];
+};
+
+export const getDemoTopCategoriesReport = (_params = {}) => {
+  return [
+    { categoryId: '666000000000000000000001', name: 'Specialty Coffee', color: '#6F4E37', quantity: 124, revenue: 24200 },
+    { categoryId: '666000000000000000000002', name: 'Artisanal Teas', color: '#0F766E', quantity: 68, revenue: 14640 },
+    { categoryId: '666000000000000000000004', name: 'Gourmet Sandwiches', color: '#14B8A6', quantity: 44, revenue: 13040 },
+    { categoryId: '666000000000000000000003', name: 'Bakery & Pastries', color: '#D4A373', quantity: 64, revenue: 10240 },
+    { categoryId: '666000000000000000000005', name: 'Desserts & Sweets', color: '#B45309', quantity: 35, revenue: 9100 },
+  ];
+};
+
+export const getDemoTopOrdersReport = (_params = {}) => {
+  return [
+    {
+      _id: '666500000000000000000004',
+      orderNumber: 'ORD-DEMO-104',
+      customer: { name: 'Morgan Chen' },
+      payment: { method: 'card' },
+      total: 1617,
+    },
+    {
+      _id: '666500000000000000000001',
+      orderNumber: 'ORD-DEMO-101',
+      customer: { name: 'Alex Rivera' },
+      payment: { method: 'upi' },
+      total: 714,
+    },
+    {
+      _id: '666500000000000000000003',
+      orderNumber: 'ORD-DEMO-103',
+      customer: { name: 'Taylor Brooks' },
+      payment: { method: 'cash' },
+      total: 664,
+    },
+    {
+      _id: '666500000000000000000002',
+      orderNumber: 'ORD-DEMO-102',
+      customer: { name: 'Jordan Lee' },
+      payment: { method: 'card' },
+      total: 567,
+    },
+  ];
+};
+
+export const getDemoReportEmployees = () => {
+  return demoStaffUsers.map((u) => ({
+    _id: u._id,
+    name: u.name,
+    email: u.email,
+    role: u.role,
+  }));
+};
+
+export const getDemoReportSessions = () => {
+  return [
+    {
+      _id: demoPOSSession._id,
+      user: { name: demoPOSSession.openedBy.name },
+      status: demoPOSSession.status,
+      openedAt: demoPOSSession.openedAt,
+    },
+    {
+      _id: '666600000000000000000002',
+      user: { name: 'Demo Head Barista' },
+      status: 'closed',
+      openedAt: new Date(Date.now() - 30 * 3600 * 1000).toISOString(),
+    },
+  ];
+};
+

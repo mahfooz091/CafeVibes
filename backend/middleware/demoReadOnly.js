@@ -12,6 +12,13 @@ import {
   demoStaffUsers,
   demoCoupons,
   getDemoDashboardReports,
+  getDemoDashboardStats,
+  getDemoSalesTrend,
+  getDemoTopProductsReport,
+  getDemoTopCategoriesReport,
+  getDemoTopOrdersReport,
+  getDemoReportEmployees,
+  getDemoReportSessions,
 } from '../services/demoDataService.js';
 
 /**
@@ -114,7 +121,28 @@ export const demoSecurityMiddleware = (req, res, next) => {
     return res.json({ success: true, data: null });
   }
 
-  // Reports & Analytics
+  // Reports & Analytics (Dedicated Dummy Datasets for Admin Demo Mode)
+  if (cleanPath === '/api/reports/dashboard') {
+    return res.json({ success: true, data: getDemoDashboardStats(req.query) });
+  }
+  if (cleanPath === '/api/reports/sales-trend') {
+    return res.json({ success: true, data: getDemoSalesTrend(req.query) });
+  }
+  if (cleanPath === '/api/reports/top-products') {
+    return res.json({ success: true, data: getDemoTopProductsReport(req.query) });
+  }
+  if (cleanPath === '/api/reports/top-categories') {
+    return res.json({ success: true, data: getDemoTopCategoriesReport(req.query) });
+  }
+  if (cleanPath === '/api/reports/top-orders') {
+    return res.json({ success: true, data: getDemoTopOrdersReport(req.query) });
+  }
+  if (cleanPath === '/api/reports/employees') {
+    return res.json({ success: true, data: getDemoReportEmployees() });
+  }
+  if (cleanPath === '/api/reports/sessions') {
+    return res.json({ success: true, data: getDemoReportSessions() });
+  }
   if (cleanPath.startsWith('/api/reports')) {
     const reports = getDemoDashboardReports();
     return res.json({ success: true, data: reports });

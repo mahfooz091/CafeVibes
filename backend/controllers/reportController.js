@@ -2,6 +2,7 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { generateExcelReport, generatePDFReport } from '../services/reportService.js';
+import { demoOrders } from '../services/demoDataService.js';
 import mongoose from 'mongoose';
 
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
@@ -285,7 +286,9 @@ export const getReportSessions = asyncHandler(async (req, res) => {
 
 export const exportExcel = asyncHandler(async (req, res) => {
   const match = buildReportFilter(req.query);
-  const orders = await Order.find(match).populate('customer', 'name').sort({ paidAt: -1 });
+  const orders = req.user?.role === 'demo_viewer'
+    ? demoOrders
+    : await Order.find(match).populate('customer', 'name').sort({ paidAt: -1 });
   const buffer = await generateExcelReport(orders);
 
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -295,7 +298,9 @@ export const exportExcel = asyncHandler(async (req, res) => {
 
 export const exportPDF = asyncHandler(async (req, res) => {
   const match = buildReportFilter(req.query);
-  const orders = await Order.find(match).populate('customer', 'name').sort({ paidAt: -1 });
+  const orders = req.user?.role === 'demo_viewer'
+    ? demoOrders
+    : await Order.find(match).populate('customer', 'name').sort({ paidAt: -1 });
 
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', 'attachment; filename=cafevibes-report.pdf');

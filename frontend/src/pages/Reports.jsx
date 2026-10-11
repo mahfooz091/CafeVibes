@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Download, FileSpreadsheet, Calendar, Users, Briefcase, Tag, RefreshCw, TrendingUp, ShoppingBag, DollarSign } from 'lucide-react';
+import {
+  Download,
+  FileSpreadsheet,
+  Calendar,
+  Users,
+  Briefcase,
+  Tag,
+  RefreshCw,
+  TrendingUp,
+  ShoppingBag,
+  DollarSign,
+  Sparkles,
+  ShieldCheck,
+} from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 import DashboardLayout from '../layouts/DashboardLayout';
@@ -8,6 +21,96 @@ import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { reportAPI, productAPI } from '../services/endpoints';
 import { formatCurrency, formatDateTime } from '../utils/helpers';
+import { useAuth } from '../context/AuthContext';
+
+// Dummy Fallback Datasets for Demo Mode & Resilient Rendering
+const DUMMY_DEMO_STATS = {
+  revenue: 142850,
+  totalOrders: 284,
+  avgOrderValue: 502.99,
+  todayRevenue: 16840,
+  todayOrders: 32,
+};
+
+const DUMMY_DEMO_TREND = [
+  { date: '2026-10-05', revenue: 12400, orders: 24 },
+  { date: '2026-10-06', revenue: 14100, orders: 27 },
+  { date: '2026-10-07', revenue: 13850, orders: 26 },
+  { date: '2026-10-08', revenue: 15600, orders: 29 },
+  { date: '2026-10-09', revenue: 18900, orders: 36 },
+  { date: '2026-10-10', revenue: 22400, orders: 42 },
+  { date: '2026-10-11', revenue: 16840, orders: 32 },
+];
+
+const DUMMY_DEMO_TOP_PRODUCTS = [
+  { productId: 'demo_p1', name: 'Ceremonial Matcha Latte', quantity: 42, revenue: 10080 },
+  { productId: 'demo_p2', name: 'Vanilla Silk Cappuccino', quantity: 48, revenue: 8640 },
+  { productId: 'demo_p3', name: 'Smoked Avocado Toast', quantity: 26, revenue: 7280 },
+  { productId: 'demo_p4', name: 'Caramel Macchiato Reserve', quantity: 31, revenue: 6820 },
+  { productId: 'demo_p5', name: 'Flaky Almond Butter Croissant', quantity: 38, revenue: 6080 },
+  { productId: 'demo_p6', name: 'Kyoto Cold Brew', quantity: 29, revenue: 5800 },
+  { productId: 'demo_p7', name: 'Truffle Mushroom Panini', quantity: 18, revenue: 5760 },
+];
+
+const DUMMY_DEMO_TOP_CATEGORIES = [
+  { categoryId: 'demo_c1', name: 'Specialty Coffee', color: '#6F4E37', quantity: 124, revenue: 24200 },
+  { categoryId: 'demo_c2', name: 'Artisanal Teas', color: '#0F766E', quantity: 68, revenue: 14640 },
+  { categoryId: 'demo_c3', name: 'Gourmet Sandwiches', color: '#14B8A6', quantity: 44, revenue: 13040 },
+  { categoryId: 'demo_c4', name: 'Bakery & Pastries', color: '#D4A373', quantity: 64, revenue: 10240 },
+  { categoryId: 'demo_c5', name: 'Desserts & Sweets', color: '#B45309', quantity: 35, revenue: 9100 },
+];
+
+const DUMMY_DEMO_TOP_ORDERS = [
+  {
+    _id: 'demo_o1',
+    orderNumber: 'ORD-DEMO-104',
+    customer: { name: 'Morgan Chen' },
+    payment: { method: 'card' },
+    total: 1617,
+  },
+  {
+    _id: 'demo_o2',
+    orderNumber: 'ORD-DEMO-101',
+    customer: { name: 'Alex Rivera' },
+    payment: { method: 'upi' },
+    total: 714,
+  },
+  {
+    _id: 'demo_o3',
+    orderNumber: 'ORD-DEMO-103',
+    customer: { name: 'Taylor Brooks' },
+    payment: { method: 'cash' },
+    total: 664,
+  },
+  {
+    _id: 'demo_o4',
+    orderNumber: 'ORD-DEMO-102',
+    customer: { name: 'Jordan Lee' },
+    payment: { method: 'card' },
+    total: 567,
+  },
+];
+
+const DUMMY_DEMO_EMPLOYEES = [
+  { _id: 'demo_u1', name: 'Rahul Sharma', role: 'manager' },
+  { _id: 'demo_u2', name: 'Priya Verma', role: 'cashier' },
+  { _id: 'demo_u3', name: 'Vikas Kumar', role: 'barista' },
+];
+
+const DUMMY_DEMO_SESSIONS = [
+  {
+    _id: 'demo_s1',
+    user: { name: 'Demo Administrator' },
+    openedAt: new Date(Date.now() - 6 * 3600 * 1000).toISOString(),
+    status: 'open',
+  },
+  {
+    _id: 'demo_s2',
+    user: { name: 'Demo Head Barista' },
+    openedAt: new Date(Date.now() - 30 * 3600 * 1000).toISOString(),
+    status: 'closed',
+  },
+];
 
 const getLocalDateString = (date = new Date()) => {
   const year = date.getFullYear();
@@ -36,6 +139,9 @@ const calculatePeriodRange = (period) => {
 };
 
 const Reports = () => {
+  const { user, isDemo } = useAuth();
+  const isDemoViewer = Boolean(isDemo || user?.role === 'demo_viewer');
+
   const [period, setPeriod] = useState('all');
   const [employee, setEmployee] = useState('');
   const [session, setSession] = useState('');
@@ -104,6 +210,25 @@ const Reports = () => {
     queryFn: () => reportAPI.getTopOrders({ ...params, limit: 10 }).then((r) => r.data.data),
   });
 
+  // Resilient data extractors ensuring no crashes occur
+  const safeArray = (val, fallback = []) => (Array.isArray(val) ? val : fallback);
+
+  const effectiveEmployees = safeArray(employees, isDemoViewer ? DUMMY_DEMO_EMPLOYEES : []);
+  const effectiveSessions = safeArray(sessions, isDemoViewer ? DUMMY_DEMO_SESSIONS : []);
+  const effectiveProductsList = safeArray(productsList, []);
+
+  const effectiveStats =
+    stats && typeof stats === 'object' && !Array.isArray(stats) && (stats.revenue !== undefined || stats.totalOrders !== undefined)
+      ? stats
+      : isDemoViewer
+      ? DUMMY_DEMO_STATS
+      : { revenue: 0, totalOrders: 0, avgOrderValue: 0 };
+
+  const effectiveTrend = safeArray(trend, isDemoViewer ? DUMMY_DEMO_TREND : []);
+  const effectiveTopProducts = safeArray(topProducts, isDemoViewer ? DUMMY_DEMO_TOP_PRODUCTS : []);
+  const effectiveTopCategories = safeArray(topCategories, isDemoViewer ? DUMMY_DEMO_TOP_CATEGORIES : []);
+  const effectiveTopOrders = safeArray(topOrders, isDemoViewer ? DUMMY_DEMO_TOP_ORDERS : []);
+
   const handleResetFilters = () => {
     setPeriod('month');
     setEmployee('');
@@ -150,6 +275,26 @@ const Reports = () => {
           </div>
         </div>
 
+        {/* Demo Mode Notice Banner */}
+        {isDemoViewer && (
+          <div className="bg-amber-500/10 border border-amber-500/20 text-amber-900 rounded-xl p-4 flex items-start sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0">
+                <Sparkles size={18} />
+              </div>
+              <div className="text-sm">
+                <span className="font-semibold text-amber-900">Admin Demo Report:</span>{' '}
+                <span className="text-amber-800">
+                  Displaying simulated cafe business metrics, sales trajectories, and order trends. Filter and export dummy data freely — changes do not affect live systems.
+                </span>
+              </div>
+            </div>
+            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 font-semibold shrink-0">
+              <ShieldCheck size={12} /> Read-Only Demo
+            </span>
+          </div>
+        )}
+
         {/* Filter Bar */}
         <div className="card !p-4 flex flex-col gap-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -182,7 +327,7 @@ const Reports = () => {
                 onChange={(e) => setEmployee(e.target.value)}
               >
                 <option value="">All Employees</option>
-                {employees?.map((emp) => (
+                {effectiveEmployees.map((emp) => (
                   <option key={emp._id} value={emp._id}>
                     {emp.name} ({emp.role})
                   </option>
@@ -201,9 +346,9 @@ const Reports = () => {
                 onChange={(e) => setSession(e.target.value)}
               >
                 <option value="">All Sessions</option>
-                {sessions?.map((sess) => (
+                {effectiveSessions.map((sess) => (
                   <option key={sess._id} value={sess._id}>
-                    {sess.user?.name} - {formatDateTime(sess.openedAt).split(',')[0]} ({sess.status})
+                    {sess.user?.name || 'Staff'} - {sess.openedAt ? formatDateTime(sess.openedAt).split(',')[0] : 'Today'} ({sess.status || 'open'})
                   </option>
                 ))}
               </select>
@@ -220,7 +365,7 @@ const Reports = () => {
                 onChange={(e) => setProduct(e.target.value)}
               >
                 <option value="">All Products</option>
-                {productsList?.map((prod) => (
+                {effectiveProductsList.map((prod) => (
                   <option key={prod._id} value={prod._id}>
                     {prod.name}
                   </option>
@@ -254,7 +399,7 @@ const Reports = () => {
           )}
 
           {/* Reset Filters CTA */}
-          {(employee || session || product || period !== 'month' || customRange.startDate || customRange.endDate) && (
+          {(employee || session || product || period !== 'all' || customRange.startDate || customRange.endDate) && (
             <div className="flex justify-end pt-1">
               <button
                 onClick={handleResetFilters}
@@ -267,7 +412,7 @@ const Reports = () => {
         </div>
 
         {/* Loading / KPI Metrics & Charts */}
-        {statsLoading ? (
+        {statsLoading && !isDemoViewer ? (
           <LoadingSpinner className="h-64" />
         ) : (
           <>
@@ -279,7 +424,7 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Revenue</p>
-                  <p className="text-2xl font-bold text-gray-800">{formatCurrency(stats?.revenue || 0)}</p>
+                  <p className="text-2xl font-bold text-gray-800">{formatCurrency(effectiveStats.revenue || 0)}</p>
                 </div>
               </div>
               <div className="card flex items-center gap-4 hover:shadow-md transition-all duration-200">
@@ -288,7 +433,7 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Total Orders</p>
-                  <p className="text-2xl font-bold text-gray-800">{stats?.totalOrders || 0}</p>
+                  <p className="text-2xl font-bold text-gray-800">{effectiveStats.totalOrders || 0}</p>
                 </div>
               </div>
               <div className="card flex items-center gap-4 hover:shadow-md transition-all duration-200">
@@ -297,7 +442,7 @@ const Reports = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 font-medium">Average Order Value</p>
-                  <p className="text-2xl font-bold text-gray-800">{formatCurrency(stats?.avgOrderValue || 0)}</p>
+                  <p className="text-2xl font-bold text-gray-800">{formatCurrency(effectiveStats.avgOrderValue || 0)}</p>
                 </div>
               </div>
             </div>
@@ -328,11 +473,11 @@ const Reports = () => {
                   </div>
                 </div>
                 <div className="flex-1 min-h-[280px]">
-                  {trendLoading ? (
+                  {trendLoading && !isDemoViewer ? (
                     <LoadingSpinner className="h-64" />
                   ) : (
                     <ResponsiveContainer width="100%" height={280}>
-                      <AreaChart data={trend || []}>
+                      <AreaChart data={effectiveTrend}>
                         <defs>
                           <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
                             <stop offset="5%" stopColor="#0F766E" stopOpacity={0.2} />
@@ -340,8 +485,18 @@ const Reports = () => {
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
-                        <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#6b7280' }} tickFormatter={(d) => d?.slice(5)} />
-                        <YAxis tick={{ fontSize: 11, fill: '#6b7280' }} tickFormatter={(v) => trendMetric === 'revenue' ? (v >= 1000 ? `₹${(v / 1000).toFixed(0)}k` : `₹${v}`) : v} />
+                        <XAxis
+                          dataKey="date"
+                          tick={{ fontSize: 11, fill: '#6b7280' }}
+                          tickFormatter={(d) => (typeof d === 'string' && d.length >= 5 ? d.slice(5) : d || '')}
+                        />
+                        <YAxis
+                          tick={{ fontSize: 11, fill: '#6b7280' }}
+                          tickFormatter={(v) => {
+                            const num = Number(v) || 0;
+                            return trendMetric === 'revenue' ? (num >= 1000 ? `₹${(num / 1000).toFixed(0)}k` : `₹${num}`) : num;
+                          }}
+                        />
                         <Tooltip formatter={(v) => (trendMetric === 'revenue' ? formatCurrency(v) : v)} />
                         <Area type="monotone" dataKey={trendMetric} stroke="#0F766E" fill="url(#trendGradient)" strokeWidth={2} />
                       </AreaChart>
@@ -354,13 +509,13 @@ const Reports = () => {
               <div className="card flex flex-col">
                 <h3 className="font-semibold text-gray-800 mb-4">Category Distribution</h3>
                 <div className="flex-1 min-h-[280px]">
-                  {categoriesLoading ? (
+                  {categoriesLoading && !isDemoViewer ? (
                     <LoadingSpinner className="h-64" />
                   ) : (
                     <ResponsiveContainer width="100%" height={280}>
                       <PieChart>
                         <Pie
-                          data={topCategories || []}
+                          data={effectiveTopCategories}
                           dataKey="revenue"
                           nameKey="name"
                           cx="50%"
@@ -368,9 +523,9 @@ const Reports = () => {
                           outerRadius={80}
                           innerRadius={45}
                           paddingAngle={2}
-                          label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                          label={({ name, percent }) => `${name || 'Item'} (${((percent || 0) * 100).toFixed(0)}%)`}
                         >
-                          {(topCategories || []).map((entry, i) => (
+                          {effectiveTopCategories.map((entry, i) => (
                             <Cell key={i} fill={entry.color || COLORS[i % COLORS.length]} />
                           ))}
                         </Pie>
@@ -398,21 +553,21 @@ const Reports = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {productsLoading ? (
+                      {productsLoading && !isDemoViewer ? (
                         <tr>
                           <td colSpan="3">
                             <LoadingSpinner className="py-4" />
                           </td>
                         </tr>
-                      ) : topProducts?.length === 0 ? (
+                      ) : effectiveTopProducts.length === 0 ? (
                         <tr>
                           <td colSpan="3" className="text-center py-4 text-gray-400">
                             No data available
                           </td>
                         </tr>
                       ) : (
-                        topProducts?.map((p) => (
-                          <tr key={p.productId} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        effectiveTopProducts.map((p) => (
+                          <tr key={p.productId || p.name} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                             <td className="py-2.5 font-medium text-gray-800 max-w-[150px] truncate">{p.name}</td>
                             <td className="py-2.5 text-center text-gray-600">{p.quantity}</td>
                             <td className="py-2.5 text-right font-semibold text-primary">{formatCurrency(p.revenue)}</td>
@@ -437,20 +592,20 @@ const Reports = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {categoriesLoading ? (
+                      {categoriesLoading && !isDemoViewer ? (
                         <tr>
                           <td colSpan="3">
                             <LoadingSpinner className="py-4" />
                           </td>
                         </tr>
-                      ) : topCategories?.length === 0 ? (
+                      ) : effectiveTopCategories.length === 0 ? (
                         <tr>
                           <td colSpan="3" className="text-center py-4 text-gray-400">
                             No data available
                           </td>
                         </tr>
                       ) : (
-                        topCategories?.map((c) => (
+                        effectiveTopCategories.map((c) => (
                           <tr key={c.categoryId || c.name} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                             <td className="py-2.5 font-medium text-gray-800 flex items-center gap-2">
                               <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: c.color || '#0F766E' }} />
@@ -479,21 +634,21 @@ const Reports = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {ordersLoading ? (
+                      {ordersLoading && !isDemoViewer ? (
                         <tr>
                           <td colSpan="3">
                             <LoadingSpinner className="py-4" />
                           </td>
                         </tr>
-                      ) : topOrders?.length === 0 ? (
+                      ) : effectiveTopOrders.length === 0 ? (
                         <tr>
                           <td colSpan="3" className="text-center py-4 text-gray-400">
                             No data available
                           </td>
                         </tr>
                       ) : (
-                        topOrders?.map((o) => (
-                          <tr key={o._id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                        effectiveTopOrders.map((o) => (
+                          <tr key={o._id || o.orderNumber} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
                             <td className="py-2.5 font-medium text-gray-800">
                               <div className="font-semibold">{o.orderNumber}</div>
                               <div className="text-xs text-gray-400">{o.customer?.name || 'Walk-in'}</div>

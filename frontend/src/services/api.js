@@ -1,65 +1,43 @@
 import axios from 'axios';
+import API_URL from '../utils/constants';
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { 'Content-Type': 'application/json' },
 });
 
-// Attach access token from localStorage (cookie is also set as fallback)
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('cafevibes_access_token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
+  const token = localStorage.getItem('accessToken');
+  if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
 
-let isRefreshing = false;
-let refreshSubscribers = [];
-
-const onRefreshed = (token) => {
-  refreshSubscribers.forEach((cb) => cb(token));
-  refreshSubscribers = [];
-};
-
-// Auto-refresh access token on 401, then retry original request
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const { config, response } = error;
+    const originalRequest = error.config;
+    const isAuthRequest = originalRequest?.url?.includes('/auth/login') ||
+                          originalRequest?.url?.includes('/auth/register') ||
+                          originalRequest?.url?.includes('/auth/refresh');
 
-    if (response?.status === 401 && !config._retry && config.url !== '/auth/refresh') {
-      if (isRefreshing) {
-        return new Promise((resolve) => {
-          refreshSubscribers.push((token) => {
-            config.headers.Authorization = `Bearer ${token}`;
-            config._retry = true;
-            resolve(api(config));
-          });
-        });
-      }
-
-      config._retry = true;
-      isRefreshing = true;
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRequest) {
+      originalRequest._retry = true;
 
       try {
-        const { data } = await api.post('/auth/refresh');
-        const newToken = data?.data?.accessToken;
-        if (newToken) {
-          localStorage.setItem('cafevibes_access_token', newToken);
-          onRefreshed(newToken);
-          config.headers.Authorization = `Bearer ${newToken}`;
-          return api(config);
-        }
-      } catch (refreshError) {
-        localStorage.removeItem('cafevibes_access_token');
+        const refreshToken = localStorage.getItem('refreshToken');
+        const { data } = await axios.post(`${API_URL}/auth/refresh`, { refreshToken }, { withCredentials: true });
+
+        localStorage.setItem('accessToken', data.data.accessToken);
+        localStorage.setItem('refreshToken', data.data.refreshToken);
+        originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
+
+        return api(originalRequest);
+      } catch {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
         window.location.href = '/login';
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 

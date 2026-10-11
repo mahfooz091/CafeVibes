@@ -1,87 +1,82 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { authService } from '../services/authService';
+import { authAPI } from '../services/endpoints';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  });
   const [loading, setLoading] = useState(true);
 
-  // On mount, try to restore session if an access token exists
-  useEffect(() => {
-    const bootstrap = async () => {
-      const token = localStorage.getItem('cafevibes_access_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-      try {
-        const { user: fetchedUser } = await authService.getMe();
-        setUser(fetchedUser);
-      } catch (err) {
-        localStorage.removeItem('cafevibes_access_token');
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    bootstrap();
+  const setAuthData = useCallback((userData, accessToken, refreshToken) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('accessToken', accessToken);
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
   }, []);
 
-  const persistSession = (data) => {
-    if (data?.accessToken) {
-      localStorage.setItem('cafevibes_access_token', data.accessToken);
-    }
-    setUser(data?.user || null);
+  const clearAuth = useCallback(() => {
+    setUser(null);
+    localStorage.removeItem('user');
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+  }, []);
+
+  const login = async (credentials) => {
+    const { data } = await authAPI.login(credentials);
+    setAuthData(data.data.user, data.data.accessToken, data.data.refreshToken);
+    return data.data.user;
   };
 
-  const signup = useCallback(async (payload) => {
-    const data = await authService.signup(payload);
-    persistSession(data);
-    return data;
-  }, []);
+  const register = async (userData) => {
+    const { data } = await authAPI.register(userData);
+    setAuthData(data.data.user, data.data.accessToken, data.data.refreshToken);
+    return data.data.user;
+  };
 
-  const login = useCallback(async (payload) => {
-    const data = await authService.login(payload);
-    persistSession(data);
-    return data;
-  }, []);
-
-  const googleLogin = useCallback(async (idToken) => {
-    const data = await authService.googleAuth(idToken);
-    persistSession(data);
-    return data;
-  }, []);
-
-  const logout = useCallback(async () => {
+  const logout = async () => {
     try {
-      await authService.logout();
+      await authAPI.logout();
     } finally {
-      localStorage.removeItem('cafevibes_access_token');
-      setUser(null);
+      clearAuth();
     }
-  }, []);
-
-  const value = {
-    user,
-    setUser,
-    loading,
-    isAuthenticated: !!user,
-    isAdmin: user?.role === 'admin',
-    isEmployee: user?.role === 'employee',
-    signup,
-    login,
-    googleLogin,
-    logout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const handleOAuthCallback = useCallback((userData, accessToken, refreshToken) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('accessToken', accessToken);
+    if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
+  }, []);
+
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        try {
+          const { data } = await authAPI.getMe();
+          setUser(data.data);
+          localStorage.setItem('user', JSON.stringify(data.data));
+        } catch {
+          clearAuth();
+        }
+      }
+      setLoading(false);
+    };
+    initAuth();
+  }, [clearAuth]);
+
+  return (
+    <AuthContext.Provider value={{ user, loading, login, register, logout, handleOAuthCallback, isAdmin: user?.role === 'admin' }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };

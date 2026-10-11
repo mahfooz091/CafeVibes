@@ -1,260 +1,143 @@
-# ☕ CafeVibes
+# CafeVibes
 
-<p align="center">
-  <b>The Digital Heartbeat of Your Cafe</b><br/>
-  <i>A complete production-ready MERN Stack Restaurant POS & Kitchen Management System.</i>
-</p>
+**The Digital Heartbeat of Your Cafe**
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/MongoDB-Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Socket.io-Realtime-010101?style=for-the-badge&logo=socket.io&logoColor=white" alt="Socket.io" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License" />
-</p>
+A complete production-ready MERN Stack Restaurant POS & Kitchen Management System.
 
----
+## Features
 
-## 🌟 Introduction
+- **Authentication** — JWT, Google OAuth, refresh tokens, role-based access (Admin/Employee)
+- **POS Terminal** — Product search, category filters, cart management, multi-payment
+- **Kitchen Display** — Real-time order tracking via Socket.io
+- **Product & Category Management** — Full CRUD with color-coded categories
+- **Floor & Table Management** — Visual table states (available/occupied)
+- **Customer Management** — Profiles with order history tracking
+- **Coupons & Promotions** — Fixed/percentage discounts with auto-apply
+- **Payment System** — Cash, Card, UPI QR code generation
+- **Receipt System** — Printable HTML, PDF download, email receipts
+- **Reports & Analytics** — Revenue charts, top products/categories, Excel/PDF export
 
-**CafeVibes** is an all-in-one restaurant and cafe management system designed to streamline operations, coordinate kitchen orders, manage table states, process checkout transactions, and provide business performance analytics. 
+## Tech Stack
 
-Built using the **MERN (MongoDB, Express, React, Node.js)** stack, CafeVibes implements modern web practices, including a real-time Socket.io kitchen display system, responsive Tailwind CSS dashboards, fluid Framer Motion animations, state synchronization with Zustand and React Query, and robust secure cookie/JWT-based role authentication.
+| Layer | Technologies |
+|-------|-------------|
+| Frontend | React (Vite), Tailwind CSS, Framer Motion, React Query, Recharts, Socket.io |
+| Backend | Node.js, Express, MongoDB, Mongoose, JWT, Passport Google OAuth, Socket.io |
+| Tools | QR Code, PDFKit, ExcelJS, Nodemailer |
 
----
+## Prerequisites
 
-## 🖥️ Screen Showcases & Features
+- Node.js 18+
+- MongoDB (local via MongoDB Compass or Atlas)
+- Google OAuth credentials (optional, for Google login)
 
-Here is a visual walkthrough of the platform interfaces, matching the screenshots provided in the [Screenshots/](file:///Users/mahfoozalam/Desktop/CafeVibes/Screenshots) directory:
+## Setup
 
-### 1. Public & Core Portals
-*   **Landing Page**: A clean, responsive public introduction showcase presenting CafeVibes.
-    <p align="center"><img src="./screenshots/landingpage.jpeg" width="90%" alt="Landing Page" /></p>
-*   **Authentication & Access**: Standard form validation and secure signups with role-based routing (Admin vs. Employee).
-    <table align="center" width="100%">
-      <tr>
-        <td width="50%" align="center"><b>Sign Up</b></td>
-        <td width="50%" align="center"><b>Log In</b></td>
-      </tr>
-      <tr>
-        <td><img src="./screenshots/Signup.jpeg" width="100%" alt="Sign Up" /></td>
-        <td><img src="./screenshots/Login.jpeg" width="100%" alt="Login" /></td>
-      </tr>
-    </table>
-
----
-
-### 2. POS Terminal & Checkout
-*   **POS Terminal Interface**: Quick product search, categorizations, color-coded identifiers, and interactive catalog browsing.
-    <p align="center"><img src="./screenshots/POSTerminal.jpeg" width="90%" alt="POS Terminal" /></p>
-*   **Active Cart & Checkout Drawer**: Visual cart calculation displaying item lists, subtotals, custom discounts, and payment methods.
-    <p align="center"><img src="./screenshots/POSCart.jpeg" width="90%" alt="POS Cart" /></p>
-*   **Dynamic Payments & Invoicing**: Generates instant UPI/cash QR Codes for cashless transactions and prints elegant formatted HTML customer receipts.
-    <table align="center" width="100%">
-      <tr>
-        <td width="50%" align="center"><b>Payment QR Code</b></td>
-        <td width="50%" align="center"><b>Bill / Receipt View</b></td>
-      </tr>
-      <tr>
-        <td><img src="./screenshots/QRCode.jpeg" width="100%" alt="QR Code Payment" /></td>
-        <td><img src="./screenshots/Receipt.jpeg" width="100%" alt="Bill Receipt" /></td>
-      </tr>
-    </table>
-
----
-
-### 3. Kitchen Operations & Order Logs
-*   **Real-time Kitchen Display System (KDS)**: Dynamically updates orders using Socket.io. Shows order timer countdowns, item checklists, and lets chefs mark tickets as complete instantly.
-    <p align="center"><img src="./screenshots/Kitchen.jpeg" width="90%" alt="Kitchen Display System" /></p>
-*   **Detailed Order Lists**: Review past, active, pending, and completed orders with comprehensive search and metadata tracking.
-    <p align="center"><img src="./screenshots/Orders.jpeg" width="90%" alt="Order Management" /></p>
-
----
-
-### 4. Space & Operations Layout
-*   **Floor & Table Seating Engine**: Visual floor layouts mapping physical dining spaces. Dynamically tracks table state (available, occupied, or reserved) to synchronize POS and kitchen ticketing.
-    <p align="center"><img src="./screenshots/Floor&Tables.jpeg" width="90%" alt="Floor & Tables Management" /></p>
-
----
-
-### 5. Administrative Controls & Analytics
-*   **Performance Dashboards**: Executive oversight on total sales, active orders, customer counts, and real-time revenue breakdowns.
-    <p align="center"><img src="./screenshots/Dashboard.jpeg" width="90%" alt="Admin Dashboard" /></p>
-*   **Sales & Business Reports**: Financial summaries detailing revenue trends and item performance, with options to export lists to Excel/PDF.
-    <p align="center"><img src="./screenshots/Reports.jpeg" width="90%" alt="Reports & Analytics" /></p>
-*   **Resource & Settings Panel**: General system configs, printer choices, currency preferences, and theme choices.
-    <p align="center"><img src="./screenshots/Settings.jpeg" width="90%" alt="Settings" /></p>
-
----
-
-### 6. Catalog, Promotions & Staff CRM
-Manage key database entities with standard responsive CRUD modals:
-*   **Products & Category Panels**: Color-coded categorization and catalog tracking.
-    <table align="center" width="100%">
-      <tr>
-        <td width="50%" align="center"><b>Products Manager</b></td>
-        <td width="50%" align="center"><b>Categories Manager</b></td>
-      </tr>
-      <tr>
-        <td><img src="./screenshots/Products.jpeg" width="100%" alt="Products" /></td>
-        <td><img src="./screenshots/Categories.jpeg" width="100%" alt="Categories" /></td>
-      </tr>
-    </table>
-*   **Coupons & Customer Relationship (CRM)**: Custom percentage/fixed value discounts and detailed customer logs.
-    <table align="center" width="100%">
-      <tr>
-        <td width="50%" align="center"><b>Coupons & Promos</b></td>
-        <td width="50%" align="center"><b>Customer CRM Profiles</b></td>
-      </tr>
-      <tr>
-        <td><img src="./screenshots/Coupons.jpeg" width="100%" alt="Coupons" /></td>
-        <td><img src="./screenshots/Customers.jpeg" width="100%" alt="Customers" /></td>
-      </tr>
-    </table>
-*   **Staff & User Control**: Manage user profiles, active employees, roles (Admin vs. Employee), and access status.
-    <table align="center" width="100%">
-      <tr>
-        <td width="50%" align="center"><b>Admin Staff Grid</b></td>
-        <td width="50%" align="center"><b>Employee Profile Page</b></td>
-      </tr>
-      <tr>
-        <td><img src="./screenshots/Employee.jpeg" width="100%" alt="Employee Admin Page" /></td>
-        <td><img src="./screenshots/EmployeePage.jpeg" width="100%" alt="Employee Dashboard Page" /></td>
-      </tr>
-    </table>
-
----
-
-## 🛠️ Technology Stack
-
-| Layer | Technology | Details |
-|:---|:---|:---|
-| **Frontend** | React (Vite) | Powered by SPA routing, standard hooks, and fast builds. |
-| | Tailwind CSS | Sleek, modern, and fully responsive custom design system. |
-| | Zustand | Lightweight client state management for the POS checkout cart. |
-| | React Query | Handles asynchronous API caching and state validation. |
-| | Framer Motion | Smooth component-level animations and layout transitions. |
-| | Recharts | Renders dynamic financial analytics and trend graphs. |
-| | Socket.io Client | Listen to instant order tickets on the Kitchen screen. |
-| **Backend** | Node.js & Express | Extensible, modular MVC architecture with clean API patterns. |
-| | MongoDB & Mongoose | Document-oriented schemas mapping relationships between products, users, orders, and tables. |
-| | JWT & Cookies | Secure cookies combined with JSON Web Tokens and refresh flows. |
-| | Socket.io | Server-side web socket server dispatching live updates to terminal clients. |
-| **Utilities** | Lucide React | Clean, scalable vector outline icons. |
-| | BcryptJS | Salted password hashing algorithms for secure database records. |
-| | Express Rate Limit | API route protection against high-frequency traffic spikes. |
-
----
-
-## ⚙️ Setup & Installation
-
-### Prerequisites
-*   **Node.js**: Version 18.x or higher installed.
-*   **MongoDB**: Run a local instance (e.g., via MongoDB Compass) or setup a MongoDB Atlas cloud URI.
-
-### 1. Clone & Dependency Setup
-First, navigate to your local working directory and install the necessary dependencies:
+### 1. Clone and install
 
 ```bash
 cd CafeVibes
 
-# Install Backend dependencies
+# Backend
 cd backend
+cp .env.example .env
+# Edit .env with your MongoDB URI, JWT secrets, Google OAuth, SMTP settings
 npm install
 
-# Install Frontend dependencies
+# Frontend
 cd ../frontend
 npm install
 ```
 
-### 2. Configure Environment Variables
-You need to configure credentials for both the backend and frontend.
+### 2. Configure environment
 
-#### Backend Configuration
-Create a `.env` file inside the `backend/` folder based on `backend/.env.example`:
+Edit `backend/.env`:
 
 ```env
-PORT=5000
-MONGODB_URI=mongodb://127.0.0.1:27017/cafevibes
-JWT_SECRET=your_jwt_access_secret_key
-JWT_REFRESH_SECRET=your_jwt_refresh_secret_key
+MONGODB_URI=mongodb://localhost:27017/cafevibes
+JWT_SECRET=your_secret_key
+JWT_REFRESH_SECRET=your_refresh_secret
 CLIENT_URL=http://localhost:5173
-NODE_ENV=development
-
-# Optional OAuth & Mailer
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 ```
 
-#### Frontend Configuration
-Create a `.env` file inside the `frontend/` folder (optional, falls back to defaults if not present):
+Create `frontend/.env` (optional):
 
 ```env
 VITE_API_URL=http://localhost:5000/api
 VITE_SOCKET_URL=http://localhost:5000
 ```
 
-### 3. Database Initialization
-Ensure your MongoDB local instance is active. By default, it looks for:
-`mongodb://127.0.0.1:27017/cafevibes`
+### 3. Start MongoDB
 
-### 4. Running the Development Server
-Run the backend and frontend services simultaneously in two terminal screens:
+Ensure MongoDB is running locally (default: `mongodb://localhost:27017`).
 
-#### Terminal 1: Start Backend API & Sockets
+### 4. Run the application
+
 ```bash
+# Terminal 1 — Backend
 cd backend
 npm run dev
-```
-*API runs at http://localhost:5000/api*  
-*Health Check: http://localhost:5000/api/health*
 
-#### Terminal 2: Start Frontend Web App
-```bash
+# Terminal 2 — Frontend
 cd frontend
 npm run dev
 ```
-*Frontend runs at http://localhost:5173*
 
----
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000/api
+- Health check: http://localhost:5000/api/health
 
-## 📂 Project Architecture
+## Default Roles
+
+- The **first registered user** automatically becomes **Admin**
+- Subsequent users are **Employees** (routed to POS Terminal after login)
+- Admins are routed to the Dashboard
+
+## API Endpoints
+
+| Module | Endpoints |
+|--------|-----------|
+| Auth | `POST /api/auth/register`, `login`, `refresh`, `logout`, `GET /me`, `GET /google` |
+| Products | `GET/POST /api/products`, `GET/PUT/DELETE /api/products/:id` |
+| Categories | `GET/POST /api/categories`, `GET/PUT/DELETE /api/categories/:id` |
+| Floors/Tables | `GET/POST /api/floors`, `GET/POST /api/tables` |
+| Customers | `GET/POST /api/customers`, `GET/PUT/DELETE /api/customers/:id` |
+| Coupons | `GET/POST /api/coupons`, `POST /api/coupons/validate` |
+| Promotions | `GET/POST /api/promotions` |
+| Orders | `GET/POST /api/orders`, `GET /api/orders/kitchen` |
+| Payments | `POST /api/payments/:id/pay`, `GET /api/payments/:id/qr` |
+| Receipts | `GET /api/receipts/:id/html`, `pdf`, `POST /email` |
+| Reports | `GET /api/reports/dashboard`, `sales-trend`, `top-products`, `export/excel`, `export/pdf` |
+
+## Project Structure
 
 ```
 CafeVibes/
 ├── backend/
-│   ├── config/          # DB connections, Passport Google OAuth configurations
-│   ├── controller/      # Controller structures (express middleware handlers)
-│   ├── controllers/     # Authentication & Auth flow handlers
-│   ├── middleware/      # Auth protection, Role access validations, Error handlers
-│   ├── models/          # MongoDB Mongoose models (User, Table, Floor, Order, Product, etc.)
-│   ├── routes/          # Express API route endpoints
-│   ├── sockets/         # Socket.io connection handlers for kitchen updates
-│   ├── utils/           # Global helpers, custom API error/response handlers
-│   ├── app.js           # App initialization & core middleware configuration
-│   └── server.js        # Server execution, socket hookup & DB listener
+│   ├── config/          # DB, Passport
+│   ├── controllers/     # Route handlers
+│   ├── middleware/      # Auth, roles, validation, rate limiting
+│   ├── models/          # Mongoose schemas
+│   ├── routes/          # API routes
+│   ├── services/        # Email, receipts, reports, QR
+│   ├── sockets/         # Kitchen real-time
+│   ├── utils/           # Helpers
+│   ├── app.js
+│   └── server.js
 └── frontend/
     └── src/
-        ├── components/  # Reusable design components (buttons, inputs, cards, layouts)
-        ├── context/     # Global React Context providers (AuthContext)
-        ├── layouts/     # Page-level dashboard and shell layouts
-        ├── pages/       # SPA routing pages (POS, KitchenDisplay, Reports, Coupons, etc.)
-        ├── routes/      # Guard routes (ProtectedRoute, AdminRoute)
-        ├── services/    # REST API calling modules & Socket.io listeners
-        ├── store/       # Zustand POS cart stores
-        └── utils/       # Utility converters, price formatters
+        ├── components/  # Reusable UI
+        ├── context/     # Auth context
+        ├── layouts/     # Dashboard layout
+        ├── pages/       # All page components
+        ├── routes/      # Route guards
+        ├── services/    # API & Socket
+        ├── store/       # Cart state
+        └── utils/       # Helpers
 ```
 
----
+## License
 
-## 🔐 System Roles & Default Behavior
-*   **Role Setup**: System checks for user status. The **first registered user** on a fresh database automatically inherits the `Admin` role. Subsequent user registrations default to the `Employee` role.
-*   **Routing Logic**:
-    *   **Admins** are automatically logged into the main **Admin Dashboard** showing metrics and controls.
-    *   **Employees** are redirected immediately to the **POS Terminal** to begin processing table seating and customer checkouts.
-
----
-
-## 📄 License
-This project is licensed under the MIT License - see the LICENSE file for details.
+MIT

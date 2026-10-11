@@ -90,11 +90,8 @@ const seedDatabase = async () => {
   // 4. Seed Historical Sessions & Orders for Reports
   const sessionCount = await POSSession.countDocuments();
   const orderCount = await Order.countDocuments();
-  if (sessionCount < 10 || orderCount < 20) {
+  if (sessionCount === 0 && orderCount === 0) {
     console.log('Seeding mock historical sessions & orders for reports...');
-    // Clean up existing POS sessions and all orders to ensure we reconstruct them correctly
-    await POSSession.deleteMany({});
-    await Order.deleteMany({});
 
     // Reset customer order stats to zero
     await Customer.updateMany({}, { totalOrders: 0, totalSpent: 0 });

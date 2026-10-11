@@ -968,8 +968,13 @@ const CustomerDemo = () => {
       </AnimatePresence>
 
       {/* 8. Footer */}
-      <footer className="bg-white border-t border-gray-200/80 py-4 text-center text-xs text-gray-500">
-        CafeVibes — Restaurant POS & Digital Kitchen Management (Customer Demo Experience)
+      <footer className="bg-white border-t border-gray-200/80 py-4 px-6 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-2">
+        <p>© 2026 CafeVibes — Restaurant POS & Digital Kitchen Management (Customer Demo Experience)</p>
+        <div className="flex gap-4">
+          <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+          <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+          <Link to="/demo" className="hover:text-primary transition-colors">Demo Hub</Link>
+        </div>
       </footer>
     </div>
   );

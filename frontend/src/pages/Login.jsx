@@ -189,11 +189,21 @@ const Login = () => {
 
           <div className="text-center text-sm space-y-2">
             <p className="text-gray-500">
-              Don&apos;t have an account? <Link to="/signup" className="text-primary font-medium hover:underline">Create Account</Link>
+              Looking to explore? <Link to="/demo" className="text-primary font-medium hover:underline">Explore Live Demo</Link>
             </p>
-            <Link to="/" className="inline-flex items-center gap-1 text-gray-500 hover:text-primary text-sm">
-              <ArrowLeft size={14} /> Back to Home
-            </Link>
+            <div className="flex items-center justify-center gap-3 text-xs text-gray-500 pt-1">
+              <Link to="/" className="inline-flex items-center gap-1 hover:text-primary">
+                <ArrowLeft size={13} /> Home
+              </Link>
+              <span>•</span>
+              <Link to="/terms" className="hover:text-primary">
+                Terms
+              </Link>
+              <span>•</span>
+              <Link to="/privacy" className="hover:text-primary">
+                Privacy
+              </Link>
+            </div>
           </div>
         </motion.div>
       </div>

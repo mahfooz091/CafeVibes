@@ -1,11 +1,12 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { ProtectedRoute, PublicRoute } from './ProtectedRoute';
 
 import LandingPage from '../pages/LandingPage';
 import DemoSelect from '../pages/DemoSelect';
 import CustomerDemo from '../pages/CustomerDemo';
+import Terms from '../pages/Terms';
+import Privacy from '../pages/Privacy';
 import Login from '../pages/Login';
-import Signup from '../pages/Signup';
 import AuthCallback from '../pages/AuthCallback';
 import Dashboard from '../pages/Dashboard';
 import Products from '../pages/Products';
@@ -27,8 +28,11 @@ const AppRoutes = () => (
     <Route path="/" element={<LandingPage />} />
     <Route path="/demo" element={<DemoSelect />} />
     <Route path="/customer-demo" element={<CustomerDemo />} />
+    <Route path="/terms" element={<Terms />} />
+    <Route path="/privacy" element={<Privacy />} />
     <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
-    <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+    {/* Redirect removed self-registration to Demo Hub */}
+    <Route path="/signup" element={<Navigate to="/demo" replace />} />
     <Route path="/auth/callback" element={<AuthCallback />} />
 
     {/* Protected Administrative & Operations Routes */}

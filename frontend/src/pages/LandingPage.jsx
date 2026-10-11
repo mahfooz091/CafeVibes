@@ -7,7 +7,7 @@ import Button from '../components/common/Button';
 import { useAuth } from '../context/AuthContext';
 import {
   Coffee, Monitor, ChefHat, CreditCard, BarChart3,
-  Sparkles, ArrowRight
+  Sparkles, ArrowRight, ShoppingBag
 } from 'lucide-react';
 
 const features = [
@@ -33,17 +33,25 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo size="md" />
           <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleExploreDemo}
-              disabled={demoLoading}
-              className="text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 cursor-pointer"
-            >
-              <Sparkles size={14} className="mr-1 text-amber-600" /> Live Demo
-            </Button>
-            <Link to="/login"><Button variant="ghost" size="sm">Login</Button></Link>
-            <Link to="/signup"><Button size="sm" className="shadow-md shadow-primary/25">Get Started</Button></Link>
+            <Link to="/demo">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 cursor-pointer"
+              >
+                <Sparkles size={14} className="mr-1 text-amber-600" /> Live Demo
+              </Button>
+            </Link>
+            <Link to="/customer-demo">
+              <Button variant="ghost" size="sm" className="text-gray-700 hover:text-primary">
+                Customer Menu
+              </Button>
+            </Link>
+            <Link to="/login">
+              <Button size="sm" className="shadow-md shadow-primary/25">
+                Sign In
+              </Button>
+            </Link>
           </div>
         </div>
       </nav>
@@ -85,16 +93,16 @@ const LandingPage = () => {
               <Button
                 size="lg"
                 onClick={handleExploreDemo}
-                loading={demoLoading}
                 className="w-full sm:w-auto shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group cursor-pointer"
               >
                 <Sparkles size={18} className="text-amber-300" />
                 Explore Live Demo
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Button>
-              <Link to="/signup" className="w-full sm:w-auto">
-                <Button variant="secondary" size="lg" className="w-full bg-white border border-gray-200">
-                  Register Cafe
+              <Link to="/customer-demo" className="w-full sm:w-auto">
+                <Button variant="secondary" size="lg" className="w-full bg-white border border-gray-200 flex items-center justify-center gap-2 text-gray-700 hover:text-primary">
+                  <ShoppingBag size={18} className="text-amber-600" />
+                  Customer Storefront
                 </Button>
               </Link>
             </div>
@@ -196,9 +204,10 @@ const LandingPage = () => {
       <footer className="py-4 px-6 border-t border-gray-100 z-50 bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-2">
           <p>© 2026 CafeVibes Inc. All rights reserved.</p>
-          <div className="flex gap-4">
-            <span className="hover:text-primary cursor-pointer transition-colors">Terms</span>
-            <span className="hover:text-primary cursor-pointer transition-colors">Privacy</span>
+          <div className="flex gap-5">
+            <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+            <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+            <Link to="/demo" className="hover:text-primary transition-colors">Demo Hub</Link>
           </div>
         </div>
       </footer>

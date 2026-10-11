@@ -227,8 +227,12 @@ const DemoSelect = () => {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-6xl w-full mx-auto text-center py-3 border-t border-gray-200/60 text-xs text-gray-500">
-        CafeVibes — Restaurant POS & Digital Kitchen Management
+      <footer className="max-w-6xl w-full mx-auto flex flex-col sm:flex-row justify-between items-center py-4 border-t border-gray-200/60 text-xs text-gray-500 gap-2">
+        <p>© 2026 CafeVibes — Restaurant POS & Digital Kitchen Management</p>
+        <div className="flex gap-4">
+          <Link to="/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+          <Link to="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+        </div>
       </footer>
     </div>
   );

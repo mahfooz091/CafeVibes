@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { register, login, refreshToken, logout, getMe, googleCallback } from '../controllers/authController.js';
+import { register, login, demoLogin, refreshToken, logout, getMe, googleCallback } from '../controllers/authController.js';
 import { protect } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { registerValidation, loginValidation } from '../middleware/validators.js';
@@ -10,6 +10,7 @@ const router = express.Router();
 
 router.post('/register', authLimiter, registerValidation, validate, register);
 router.post('/login', authLimiter, loginValidation, validate, login);
+router.post('/demo', authLimiter, demoLogin);
 router.post('/refresh', refreshToken);
 router.post('/logout', logout);
 router.get('/me', protect, getMe);

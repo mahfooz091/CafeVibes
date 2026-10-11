@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import Category from '../models/Category.js';
 import Product from '../models/Product.js';
 import Floor from '../models/Floor.js';
@@ -100,6 +101,35 @@ const seedDatabase = async () => {
     if (!existingAdmin) {
       console.log('ℹ️ No administrator account exists. Configure INITIAL_ADMIN_EMAIL & INITIAL_ADMIN_PASSWORD or register the first user.');
     }
+  }
+
+  // 3b. Seed Dedicated Demo Accounts for Visitor Exploration
+  const demoAdminEmail = 'demo.admin@cafevibes.com';
+  let demoAdmin = await User.findOne({ email: demoAdminEmail });
+  if (!demoAdmin) {
+    const randomPassword = crypto.randomBytes(16).toString('hex') + 'A1!';
+    await User.create({
+      name: 'Demo Administrator',
+      email: demoAdminEmail,
+      password: randomPassword,
+      role: 'admin',
+      isVerified: true,
+      isActive: true,
+    });
+  }
+
+  const demoStaffEmail = 'demo.staff@cafevibes.com';
+  let demoStaff = await User.findOne({ email: demoStaffEmail });
+  if (!demoStaff) {
+    const randomPassword = crypto.randomBytes(16).toString('hex') + 'A1!';
+    await User.create({
+      name: 'Demo Staff / Cashier',
+      email: demoStaffEmail,
+      password: randomPassword,
+      role: 'employee',
+      isVerified: true,
+      isActive: true,
+    });
   }
 
   // 4. Seed Historical Sessions & Orders for Reports

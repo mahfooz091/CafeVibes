@@ -1,7 +1,10 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import Logo from '../components/common/Logo';
 import Button from '../components/common/Button';
+import { useAuth } from '../context/AuthContext';
 import {
   Coffee, Monitor, ChefHat, CreditCard, BarChart3,
   Sparkles, ArrowRight
@@ -15,6 +18,24 @@ const features = [
 ];
 
 const LandingPage = () => {
+  const { demoLogin } = useAuth();
+  const navigate = useNavigate();
+  const [demoLoading, setDemoLoading] = useState(false);
+
+  const handleExploreDemo = async () => {
+    setDemoLoading(true);
+    try {
+      await demoLogin('admin');
+      toast.success('Welcome to CafeVibes Demo!');
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Demo access error');
+      navigate('/login');
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-cream via-white to-primary/5 flex flex-col font-sans">
       {/* Header */}
@@ -22,6 +43,15 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo size="md" />
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleExploreDemo}
+              disabled={demoLoading}
+              className="text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 cursor-pointer"
+            >
+              <Sparkles size={14} className="mr-1 text-amber-600" /> Live Demo
+            </Button>
             <Link to="/login"><Button variant="ghost" size="sm">Login</Button></Link>
             <Link to="/signup"><Button size="sm" className="shadow-md shadow-primary/25">Get Started</Button></Link>
           </div>
@@ -62,15 +92,19 @@ const LandingPage = () => {
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start pt-2">
+              <Button
+                size="lg"
+                onClick={handleExploreDemo}
+                loading={demoLoading}
+                className="w-full sm:w-auto shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group cursor-pointer"
+              >
+                <Sparkles size={18} className="text-amber-300" />
+                Explore Live Demo
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Button>
               <Link to="/signup" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full shadow-lg shadow-primary/20 flex items-center justify-center gap-2 group">
-                  Register Cafe
-                  <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </Link>
-              <Link to="/login" className="w-full sm:w-auto">
                 <Button variant="secondary" size="lg" className="w-full bg-white border border-gray-200">
-                  Login Dashboard
+                  Register Cafe
                 </Button>
               </Link>
             </div>

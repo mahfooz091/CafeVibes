@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Coffee, ArrowLeft } from 'lucide-react';
+import { Coffee, ArrowLeft, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Input from '../components/common/Input';
 import Button from '../components/common/Button';
@@ -11,7 +11,8 @@ import API_URL from '../utils/constants';
 const Login = () => {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const [demoLoading, setDemoLoading] = useState(null);
+  const { login, demoLogin } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,6 +26,19 @@ const Login = () => {
       toast.error(err.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDemo = async (role) => {
+    setDemoLoading(role);
+    try {
+      const user = await demoLogin(role);
+      toast.success(`Welcome to CafeVibes Demo (${user.role === 'admin' ? 'Admin' : 'Staff'})!`);
+      navigate(user.role === 'admin' ? '/dashboard' : '/pos');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Demo login failed');
+    } finally {
+      setDemoLoading(null);
     }
   };
 
@@ -76,6 +90,72 @@ const Login = () => {
           <div>
             <h2 className="text-2xl font-bold text-gray-800">Sign In</h2>
             <p className="text-gray-500 text-sm mt-1">Enter your credentials to continue</p>
+          </div>
+
+          {/* Quick Visitor Demo Access Card */}
+          <div className="bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-primary/10 border border-amber-500/30 rounded-2xl p-4 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="p-1 rounded-lg bg-amber-500/20 text-amber-700">
+                  <Sparkles size={16} />
+                </span>
+                <div>
+                  <h3 className="text-xs font-bold text-gray-900 tracking-wide uppercase">
+                    Visitor Demo Access
+                  </h3>
+                  <p className="text-[11px] text-gray-500">
+                    Explore live cafe features with 1-click
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] bg-amber-500/20 text-amber-800 font-bold px-2 py-0.5 rounded-full uppercase">
+                Instant
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => handleDemo('admin')}
+                disabled={demoLoading !== null}
+                className="flex flex-col items-start p-2.5 rounded-xl bg-white/90 hover:bg-white border border-amber-200/80 hover:border-primary hover:shadow-sm transition-all text-left cursor-pointer group disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xs font-bold text-gray-800 group-hover:text-primary transition-colors flex items-center gap-1">
+                    👑 Demo Admin
+                  </span>
+                  {demoLoading === 'admin' ? (
+                    <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span className="text-[10px] text-primary font-bold">Try →</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-gray-500 mt-0.5">
+                  POS, Reports, Users & Settings
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleDemo('employee')}
+                disabled={demoLoading !== null}
+                className="flex flex-col items-start p-2.5 rounded-xl bg-white/90 hover:bg-white border border-amber-200/80 hover:border-primary hover:shadow-sm transition-all text-left cursor-pointer group disabled:opacity-50"
+              >
+                <div className="flex items-center justify-between w-full">
+                  <span className="text-xs font-bold text-gray-800 group-hover:text-primary transition-colors flex items-center gap-1">
+                    ☕ Demo Staff
+                  </span>
+                  {demoLoading === 'employee' ? (
+                    <span className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <span className="text-[10px] text-primary font-bold">Try →</span>
+                  )}
+                </div>
+                <span className="text-[10px] text-gray-500 mt-0.5">
+                  POS Register & Kitchen KDS
+                </span>
+              </button>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">

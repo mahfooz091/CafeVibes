@@ -36,6 +36,12 @@ export const AuthProvider = ({ children }) => {
     return data.data.user;
   };
 
+  const demoLogin = async (role = 'admin') => {
+    const { data } = await authAPI.demoLogin(role);
+    setAuthData(data.data.user, data.data.accessToken, data.data.refreshToken);
+    return data.data.user;
+  };
+
   const logout = async () => {
     try {
       await authAPI.logout();
@@ -69,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   }, [clearAuth]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, handleOAuthCallback, isAdmin: user?.role === 'admin' }}>
+    <AuthContext.Provider value={{ user, loading, login, register, demoLogin, logout, handleOAuthCallback, isAdmin: user?.role === 'admin' }}>
       {children}
     </AuthContext.Provider>
   );

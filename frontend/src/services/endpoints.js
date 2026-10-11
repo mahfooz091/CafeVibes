@@ -3,6 +3,7 @@ import api from './api';
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
+  demoLogin: (role) => api.post('/auth/demo', { role }),
   logout: () => api.post('/auth/logout'),
   getMe: () => api.get('/auth/me'),
   refresh: (refreshToken) => api.post('/auth/refresh', { refreshToken }),

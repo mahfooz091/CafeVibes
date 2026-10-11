@@ -57,6 +57,10 @@ export const changeUserPassword = asyncHandler(async (req, res) => {
     throw new ApiError(404, 'User not found');
   }
 
+  if (user.email === 'demo.admin@cafevibes.com' || user.email === 'demo.staff@cafevibes.com') {
+    throw new ApiError(400, 'Demo account passwords cannot be changed.');
+  }
+
   user.password = password;
   await user.save();
 
@@ -75,6 +79,10 @@ export const toggleUserArchive = asyncHandler(async (req, res) => {
   // Prevent self-archiving (lockout safety check)
   if (user._id.toString() === req.user._id.toString()) {
     throw new ApiError(400, 'Cannot archive your own administrator account');
+  }
+
+  if (user.email === 'demo.admin@cafevibes.com' || user.email === 'demo.staff@cafevibes.com') {
+    throw new ApiError(400, 'Demo accounts cannot be deactivated as they are required for visitor exploration.');
   }
 
   user.isActive = !user.isActive;
@@ -97,6 +105,10 @@ export const deleteUser = asyncHandler(async (req, res) => {
   // Prevent self-deletion (lockout safety check)
   if (user._id.toString() === req.user._id.toString()) {
     throw new ApiError(400, 'Cannot delete your own administrator account');
+  }
+
+  if (user.email === 'demo.admin@cafevibes.com' || user.email === 'demo.staff@cafevibes.com') {
+    throw new ApiError(400, 'Demo accounts cannot be deleted as they are required for visitor exploration.');
   }
 
   await User.findByIdAndDelete(user._id);
